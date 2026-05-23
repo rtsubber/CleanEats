@@ -352,7 +352,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="about-section" style="background:#f0fdf4;border:1px solid #bbf7d0">
         <h3 style="color:#166534">🆓 Free tier includes</h3>
         <div style="text-align:left;font-size:0.82rem;line-height:1.8;color:var(--muted)">
-          <div>🥗 Healthy filter</div>
+          <div>✨ <strong>5 free premium searches</strong> — try GF, Keto, Vegan, Celiac-Safe</div>
+          <div>🥗 Healthy filter (always free)</div>
           <div>📍 Auto-locate + zip code search</div>
           <div>🎲 Decider - can't decide? We pick</div>
           <div>❤️ Save up to 3 favorites</div>
@@ -373,7 +374,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="about-section"><h3>Find safe, healthy dining - instantly</h3><p>Discover gluten-free, healthy, vegan, organic, and keto-friendly restaurants near you. Powered by Yelp's 5+ million restaurant database with verified GF menu data for 25+ chain restaurants.</p></div>
       <div class="about-section"><h3>Features</h3><div class="feature-grid"><div class="feature-item">🌾 Gluten-Free</div><div class="feature-item">🥗 Healthy</div><div class="feature-item">🌱 Vegan</div><div class="feature-item">🌿 Organic</div><div class="feature-item">🥑 Keto</div><div class="feature-item">📍 Auto-locate</div><div class="feature-item">❤️ Save Favs</div><div class="feature-item">🎲 Decide</div></div></div>
       <div class="about-section" style="text-align:center;padding:12px"><button onclick="switchTab('premium')" style="padding:10px 24px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--green),var(--purple));color:#fff;font-size:0.9rem;font-weight:700;cursor:pointer">✨ Upgrade to Premium - $2.99/mo</button></div>
-      <div class="privacy-box">🔒 <strong>Privacy:</strong> Your location is only used to find nearby restaurants. Saved favorites are stored on your device. We never share your data. No sign-up required.</div>
+      <div class="privacy-box">🔒 <strong>Privacy:</strong> Your location is only used to find nearby restaurants. Saved favorites are stored on your device. We use browser fingerprinting to manage free tier limits — no personal data is collected or shared. No sign-up required.</div>
       <div style="text-align:center;margin-top:8px"><button id="restore-link" style="background:none;border:none;color:var(--muted);font-size:0.72rem;cursor:pointer;text-decoration:underline">Already purchased? Restore your subscription</button></div>
       <p style="margin-top:16px;color:var(--muted);font-size:0.72rem">Powered by <a href="https://www.yelp.com" style="color:var(--purple);text-decoration:none;font-weight:600">Yelp</a><br>Built with 💚 by <a href="https://brandbooststudio.co" style="color:var(--purple)">BrandBoost Studio</a><br><span id="version" style="opacity:0.4;font-size:0.65rem">v2.2</span></p>
       <div style="text-align:center;margin-top:8px"><a href="mailto:feedback@brandbooststudio.co?subject=CleanEats%20Feedback" style="color:var(--purple);font-size:0.78rem;font-weight:600;text-decoration:none">💬 Send Feedback</a></div>
@@ -429,41 +430,65 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <script>
 const API_BASE=window.location.origin+'/api';let currentLocation=null,currentFilter='all',allRestaurants=[],currentSort='distance',maxDistance=10,openNowOnly=false,favorites=JSON.parse(localStorage.getItem('cleaneats-favs')||'[]'),preferences=['gf','any'],isPremium=localStorage.getItem('cleaneats-premium')==='true',deviceId=localStorage.getItem('cleaneats-device-id')||(() => {const id='dev_'+Math.random().toString(36).substr(2,12);localStorage.setItem('cleaneats-device-id',id);return id})(),currentMode='food';
 
-// Trial system - 7-day free trial for new users
-const TRIAL_DAYS=7;
+// 🔒 5-search free tier + browser fingerprinting
+const FREE_PREMIUM_SEARCHES=5;
 const PREMIUM_FILTERS=['gf','celiac','vegan','keto'];
-let trialInfo=JSON.parse(localStorage.getItem('cleaneats-trial')||'null');
-if(!trialInfo){trialInfo={start:Date.now(),daysLeft:TRIAL_DAYS};localStorage.setItem('cleaneats-trial',JSON.stringify(trialInfo));}
-function isTrialActive(){if(isPremium)return true;const elapsed=(Date.now()-trialInfo.start)/(1000*60*60*24);return elapsed<=TRIAL_DAYS;}
-function trialDaysLeft(){if(isPremium)return null;const elapsed=(Date.now()-trialInfo.start)/(1000*60*60*24);return Math.max(0,Math.ceil(TRIAL_DAYS-elapsed));}
-function isPremiumFilter(filter){return PREMIUM_FILTERS.includes(filter);}
+
+// Generate browser fingerprint (canvas + WebGL + fonts + timezone + screen)
+async function generateFingerprint(){const canvas=document.createElement('canvas');canvas.width=200;canvas.height=50;const ctx=canvas.getContext('2d');ctx.textBaseline='top';ctx.font='14px Arial';ctx.fillStyle='#f60';ctx.fillRect(125,1,62,20);ctx.fillStyle='#069';ctx.fillText('CleanEats FP',2,15);ctx.fillStyle='rgba(102,204,0,0.7)';ctx.fillText('CleanEats FP',4,17);const canvasData=canvas.toDataURL();
+const gl=document.createElement('canvas').getContext('webgl');const glInfo=gl?{vendor:gl.getParameter(gl.VENDOR),renderer:gl.getParameter(gl.RENDERER)}:{vendor:'',renderer:''};
+const components=[canvasData,navigator.userAgent,navigator.language,screen.width+'x'+screen.height,screen.colorDepth,new Date().getTimezoneOffset(),navigator.hardwareConcurrency||0,glInfo.vendor,glInfo.renderer,navigator.platform];const msg=new TextEncoder().encode(components.join('|'));const hashBuffer=await crypto.subtle.digest('SHA-256',msg);return Array.from(new Uint8Array(hashBuffer)).map(b=>b.toString(16).padStart(2,'0')).join('');}
+
+// Get or create fingerprint-based usage record
+async function getUsageRecord(){const stored=localStorage.getItem('cleaneats-usage');if(stored){try{const record=JSON.parse(stored);const fp=await generateFingerprint();if(record.fp===fp)return record;// Same device, same fingerprint — continue
+// Fingerprint changed (browser update etc) — update record but keep count
+record.fp=fp;localStorage.setItem('cleaneats-usage',JSON.stringify(record));return record;}catch(e){/* Corrupted data, reset */}}
+// New device or cleared storage — check if fingerprint exists on server
+const fp=await generateFingerprint();const record={fp,searches:0,created:Date.now()};localStorage.setItem('cleaneats-usage',JSON.stringify(record));return record;}
+
+// Track a premium filter search
+async function trackPremiumSearch(){if(isPremium)return true;// Premium users always pass
+const record=await getUsageRecord();if(record.searches<FREE_PREMIUM_SEARCHES){record.searches++;localStorage.setItem('cleaneats-usage',JSON.stringify(record));updateSearchCounterUI();return true;}
+// Exceeded free searches — show upgrade prompt
+showUpgradePrompt();return false;}
+
+// Get remaining free premium searches
+async function getRemainingSearches(){if(isPremium)return Infinity;const record=await getUsageRecord();return Math.max(0,FREE_PREMIUM_SEARCHES-record.searches);}
+
+// Update the search counter display
+async function updateSearchCounterUI(){if(isPremium){const counter=document.getElementById('search-counter');if(counter)counter.style.display='none';return;}
+const remaining=await getRemainingSearches();let counter=document.getElementById('search-counter');if(!counter){counter=document.createElement('div');counter.id='search-counter';const header=document.querySelector('.header');header.appendChild(counter);}
+counter.style.cssText='background:rgba(255,255,255,0.15);color:#fff;padding:4px 12px;border-radius:8px;font-size:0.75rem;font-weight:600;text-align:center;margin-top:4px;';if(remaining>0){counter.textContent=`✨ ${remaining} free premium search${remaining!==1?'es':''} remaining`;}else{counter.textContent='🔒 Premium filters require upgrade';counter.style.background='rgba(239,68,68,0.2)';}}
+
+// Show upgrade prompt after exhausting free searches
+function showUpgradePrompt(){const overlay=document.createElement('div');overlay.id='upgrade-overlay';overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:500;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.2s';
+const panel=document.createElement('div');panel.style.cssText='background:var(--card);border-radius:20px;padding:24px;margin:20px;max-width:360px;width:100%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2)';
+panel.innerHTML=`<div style="font-size:3rem;margin-bottom:8px">🔒</div><h3 style="font-size:1.1rem;font-weight:800;margin-bottom:4px;background:linear-gradient(135deg,var(--green),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent">You've used all ${FREE_PREMIUM_SEARCHES} free searches</h3><p style="color:var(--muted);font-size:0.85rem;margin:8px 0 16px">Unlock gluten-free, celiac-safe, keto & vegan filters for just $2.99/mo</p><button onclick="checkout('monthly')" style="width:100%;padding:14px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--green),var(--purple));color:#fff;font-size:0.95rem;font-weight:700;cursor:pointer;margin-bottom:8px">✨ Upgrade Now — $2.99/mo</button><p style="font-size:0.75rem;color:var(--muted)">7-day free trial • Cancel anytime</p><button onclick="document.getElementById('upgrade-overlay').remove()" style="margin-top:12px;background:none;border:1px solid var(--border);border-radius:10px;padding:8px 20px;color:var(--muted);font-size:0.82rem;cursor:pointer;width:100%">Continue with Healthy filter (free)</button>`;
+overlay.appendChild(panel);overlay.addEventListener('click',(e)=>{if(e.target===overlay)overlay.remove();});document.body.appendChild(overlay);}
+
+// Initialize usage tracking on load
+getUsageRecord().then(()=>updateSearchCounterUI());
 
 // 🔒 Server-side premium verification — check on app load
-// Previous client-side bypasses removed: no more hardcoded beta codes
-// Checkout redirect now triggers server verification
 if(window.location.search.includes('checkout=complete')){
-  // Stripe checkout completed — verify premium status with server
   window.history.replaceState({},'',window.location.pathname);
   verifyPremiumStatus();
 }
 
-async function verifyPremiumStatus(){try{const res=await fetch(API_BASE+'/verify-premium',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({device_id:deviceId,beta_code:localStorage.getItem('cleaneats-beta')||''})});const data=await res.json();if(data.premium){isPremium=true;localStorage.setItem('cleaneats-premium','true');if(data.source==='beta'){localStorage.setItem('cleaneats-beta',localStorage.getItem('cleaneats-beta')||data.source);}localStorage.removeItem('cleaneats-trial');updatePremiumUI();updateCeliacBtn();updateFilterLocks();showTrialBanner();}}catch(e){/* Offline — keep current status */}}
+async function verifyPremiumStatus(){try{const res=await fetch(API_BASE+'/verify-premium',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({device_id:deviceId,beta_code:localStorage.getItem('cleaneats-beta')||''})});const data=await res.json();if(data.premium){isPremium=true;localStorage.setItem('cleaneats-premium','true');if(data.source==='beta'){localStorage.setItem('cleaneats-beta',localStorage.getItem('cleaneats-beta')||data.source);}localStorage.removeItem('cleaneats-usage');// Clear usage counter — they're premium now
+updatePremiumUI();updateCeliacBtn();updateFilterLocks();updateSearchCounterUI();}}catch(e){/* Offline — keep current status */}}
 verifyPremiumStatus();
 
 // Update premium-gated filter buttons state
-function updateCeliacBtn(){const btn=document.getElementById('celiac-filter-btn');if(!btn)return;const hasAccess=isPremium||isTrialActive();if(hasAccess){btn.style.opacity='1';btn.title='Celiac-safe restaurants only';}else{btn.style.opacity='0.5';btn.title='Upgrade to Premium for celiac-safe filter';}}
+async function updateCeliacBtn(){const btn=document.getElementById('celiac-filter-btn');if(!btn)return;const hasAccess=isPremium||(await getRemainingSearches())>0;if(hasAccess){btn.style.opacity='1';btn.title='Celiac-safe restaurants only';}else{btn.style.opacity='0.5';btn.title='Upgrade to Premium for celiac-safe filter';}}
 updateCeliacBtn();
 
 // Show/hide lock icons on premium filter chips
-function updateFilterLocks(){const hasAccess=isPremium||isTrialActive();['gf-filter-btn','celiac-filter-btn','vegan-filter-btn','keto-filter-btn'].forEach(id=>{const btn=document.getElementById(id);if(!btn)return;if(hasAccess){btn.textContent=btn.textContent.replace(' 🔒','');}else if(!btn.textContent.includes('🔒')){btn.textContent+=' 🔒';}});}
+async function updateFilterLocks(){const hasAccess=isPremium||(await getRemainingSearches())>0;['gf-filter-btn','celiac-filter-btn','vegan-filter-btn','keto-filter-btn'].forEach(id=>{const btn=document.getElementById(id);if(!btn)return;if(hasAccess){btn.textContent=btn.textContent.replace(' 🔒','');}else if(!btn.textContent.includes('🔒')){btn.textContent+=' 🔒';}});}
 updateFilterLocks();
 
-// Show trial banner
-function showTrialBanner(){if(isPremium)return;const days=trialDaysLeft();const banner=document.createElement('div');banner.id='trial-banner';banner.style.cssText='background:linear-gradient(135deg,#22c55e,#6366f1);color:#fff;padding:8px 16px;text-align:center;font-size:0.8rem;font-weight:600;cursor:pointer';if(days>0){banner.innerHTML=`✨ Premium trial: <strong>${days} day${days!==1?'s':''}</strong> left — all filters unlocked! <span style="text-decoration:underline;font-size:0.7rem">Keep it →</span>`;banner.onclick=()=>switchTab('premium');}else{banner.innerHTML='🔒 Premium trial ended — <span style="text-decoration:underline">upgrade</span> to unlock GF, keto & vegan filters';banner.onclick=()=>switchTab('premium');}const header=document.querySelector('.header');if(header)header.after(banner);}
-showTrialBanner();
-
-// Periodic trial check (every minute)
-setInterval(()=>{updateFilterLocks();updateCeliacBtn();const banner=document.getElementById('trial-banner');if(banner)banner.remove();showTrialBanner();},60000);
+// Remove trial banner — replaced by search counter
+// Trial banner no longer needed; 5-search free tier replaces it
 
 // Premium checkout
 async function checkout(plan){if(!isPremium){try{const res=await fetch(API_BASE+'/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan,device_id:deviceId})});const data=await res.json();if(data.url){window.location.href=data.url;}else{alert('Checkout temporarily unavailable. Please try again.');}}catch(e){alert('Could not connect to payment service. Please try again later.');}}}
@@ -473,8 +498,8 @@ async function restorePurchase(){const btn=document.getElementById('restore-btn'
 
 function updatePremiumUI(){if(isPremium){document.querySelectorAll('.premium-badge,.premium-lock').forEach(el=>el.style.display='none');const filterChips=document.querySelectorAll('.filter-chip');filterChips.forEach(chip=>{if(PREMIUM_FILTERS.includes(chip.dataset.filter)){chip.classList.remove('locked');chip.style.opacity='1';}});}}
 
-// Premium feature gate — trial users get full access
-function requirePremium(feature){if(isPremium||isTrialActive())return true;switchTab('premium');return false;}
+// Premium feature gate — check free search count
+async function requirePremium(feature){if(isPremium)return true;const remaining=await getRemainingSearches();if(remaining>0)return true;showUpgradePrompt();return false;}
 
 // Drink mode switching
 function switchToDrinks(){currentMode='drinks';document.getElementById('filters').style.display='none';document.getElementById('drink-filters').style.display='flex';currentFilter='all';document.querySelectorAll('#drink-filters .filter-chip').forEach(c=>c.classList.remove('active'));document.querySelector('#drink-filters [data-filter="all"][data-mode="drinks"]').classList.add('active');drinkResultsCached=[]; // reset cache on mode switch
@@ -493,7 +518,7 @@ function toggleOpenNow(){openNowOnly=!openNowOnly;document.getElementById('open-
 function setSort(s){currentSort=s;document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.sort-btn[data-sort="${s}"]`).classList.add('active');if(allRestaurants.length>0)renderResults();}
 function setDistance(v){maxDistance=parseInt(v);document.getElementById('dist-label').textContent=v+' mi';if(allRestaurants.length>0)renderResults();}
 
-function toggleFav(id,name){const maxFavs=isPremium||isTrialActive()?999:3;if(favorites.length>=maxFavs&&!isFav(id)){requirePremium('unlimited-saves');return;}const idx=favorites.findIndex(f=>f.id===id);if(idx>=0){favorites.splice(idx,1);}else{favorites.push({id,name,saved:Date.now()});}localStorage.setItem('cleaneats-favs',JSON.stringify(favorites));if(allRestaurants.length>0)renderResults();}
+function toggleFav(id,name){const maxFavs=isPremium?999:3;if(favorites.length>=maxFavs&&!isFav(id)){switchTab('premium');return;}const idx=favorites.findIndex(f=>f.id===id);if(idx>=0){favorites.splice(idx,1);}else{favorites.push({id,name,saved:Date.now()});}localStorage.setItem('cleaneats-favs',JSON.stringify(favorites));if(allRestaurants.length>0)renderResults();}
 
 async function searchRestaurants(lat,lng,locationName){currentLocation={lat,lng,name:locationName};document.getElementById('results-list').innerHTML='<div class="loading"><div class="spinner"></div>Finding clean eats...</div>';try{const params=new URLSearchParams({lat,lng,filter:currentFilter,mode:currentMode});const res=await fetch(`${API_BASE}/search?${params}`);if(!res.ok)throw new Error('Search failed');allRestaurants=await res.json();renderResults();renderMap();}catch(err){document.getElementById('results-list').innerHTML='<div class="empty"><div class="emoji">😕</div><h3>Something went wrong</h3><p>Please try again</p></div>';}}
 
@@ -529,7 +554,7 @@ const favRestaurants=allRestaurants.filter(r=>isFav(r.id));if(favRestaurants.len
 
 function renderMap(){if(!currentLocation||allRestaurants.length===0)return;const{lat,lng}=currentLocation;const mapUrl=`https://www.openstreetmap.org/export/embed.html?bbox=${lng-0.08}%2C${lat-0.06}%2C${lng+0.08}%2C${lat+0.06}&layer=mapnik&marker=${lat}%2C${lng}`;document.getElementById('map-container').innerHTML=`<iframe src="${mapUrl}" style="width:100%;height:100%;border:none;border-radius:var(--radius)" loading="lazy"></iframe>`;}
 
-document.getElementById('filters').addEventListener('click',(e)=>{if(e.target.classList.contains('open-now-toggle'))return;const chip=e.target.closest('.filter-chip');if(!chip)return;if(chip.dataset.filter==='celiac'&&!isPremium&&!isTrialActive()){requirePremium('celiac');return;}if(isPremiumFilter(chip.dataset.filter)&&!isPremium&&!isTrialActive()){requirePremium(chip.dataset.filter);return;}if(chip.dataset.mode==='drinks'){switchToDrinks();return;}document.querySelectorAll('#filters .filter-chip').forEach(c=>c.classList.remove('active'));chip.classList.add('active');currentFilter=chip.dataset.filter;if(allRestaurants.length>0)renderResults();});
+document.getElementById('filters').addEventListener('click',async(e)=>{if(e.target.classList.contains('open-now-toggle'))return;const chip=e.target.closest('.filter-chip');if(!chip)return;if(isPremiumFilter(chip.dataset.filter)){const allowed=await trackPremiumSearch();if(!allowed)return;}if(chip.dataset.mode==='drinks'){switchToDrinks();return;}document.querySelectorAll('#filters .filter-chip').forEach(c=>c.classList.remove('active'));chip.classList.add('active');currentFilter=chip.dataset.filter;if(allRestaurants.length>0)renderResults();});
 document.getElementById('search-input').addEventListener('keydown',(e)=>{if(e.key==='Enter'){const q=e.target.value.trim();if(q)searchByText(q);}});
 document.getElementById('search-btn').addEventListener('click',()=>{const q=document.getElementById('search-input').value.trim();if(q)searchByText(q);});
 document.getElementById('locate-btn').addEventListener('click',useMyLocation);
