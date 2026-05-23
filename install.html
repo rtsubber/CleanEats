@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>CleanEats — Get the App</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥗</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--green:#22c55e;--purple:#6366f1;--bg:#f8faf9;--card:#fff;--text:#1a1a2e;--muted:#64748b;--border:#e2e8f0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased}
+
+.app{max-width:480px;margin:0 auto;min-height:100vh}
+
+/* Hero */
+.hero{background:linear-gradient(135deg,#22c55e 0%,#6366f1 100%);color:#fff;padding:32px 20px 24px;text-align:center}
+.hero-icon{font-size:3rem;margin-bottom:8px}
+.hero h1{font-size:1.6rem;font-weight:800;margin-bottom:4px}
+.hero p{font-size:0.9rem;opacity:0.9}
+
+/* Open App Button */
+.open-btn{display:block;margin:20px auto 0;background:#fff;color:var(--purple);border:none;border-radius:14px;padding:16px 32px;font-size:1.05rem;font-weight:700;text-decoration:none;box-shadow:0 4px 20px rgba(0,0,0,0.15);max-width:300px;text-align:center}
+
+/* Video */
+.video-wrap{margin:0 0 8px;border-radius:16px;overflow:hidden;background:#000;position:relative}
+.video-wrap video{width:100%;display:block;border-radius:16px}
+.video-label{text-align:center;color:var(--muted);font-size:0.75rem;padding:6px 0 0}
+
+/* Section */
+.section{padding:24px 20px 0}
+.section-label{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.section-label .badge{background:var(--purple);color:#fff;font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:0.5px;text-transform:uppercase}
+.section-label h2{font-size:1.15rem;font-weight:700}
+
+/* Step Card */
+.step{background:var(--card);border-radius:20px;box-shadow:0 2px 16px rgba(0,0,0,0.06);margin-bottom:16px;overflow:hidden;position:relative}
+.step-num{position:absolute;top:0;left:0;width:36px;height:36px;background:linear-gradient(135deg,var(--green),var(--purple));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.9rem;border-radius:0 0 14px 0}
+.step-content{padding:20px 20px 16px 20px}
+.step-content h3{font-size:1rem;font-weight:700;margin-bottom:6px;padding-left:8px}
+.step-content p{color:var(--muted);font-size:0.85rem;line-height:1.5;padding-left:8px}
+
+/* Phone Mockup */
+.phone{background:#0a0a1a;border-radius:20px;padding:12px;margin:12px auto;max-width:220px;position:relative;box-shadow:0 4px 24px rgba(0,0,0,0.2)}
+.phone-screen{background:#1a1a2e;border-radius:14px;overflow:hidden;aspect-ratio:9/19.5;display:flex;flex-direction:column}
+.phone-status{height:32px;background:#2a2a4a;display:flex;align-items:center;justify-content:center;gap:4px;padding:0 10px}
+.phone-status .bar{width:24px;height:4px;background:#4a4a6a;border-radius:2px}
+.phone-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 12px;gap:8px}
+.phone-app-icon{font-size:2.2rem}
+.phone-app-name{color:#e0e0f0;font-size:0.65rem;font-weight:600}
+.phone-bottom{height:36px;background:#2a2a4a;display:flex;align-items:center;justify-content:center}
+.phone-home-bar{width:60px;height:4px;background:#4a4a6a;border-radius:2px}
+
+/* Share Sheet Mockup */
+.share-sheet{position:absolute;bottom:0;left:0;right:0;background:rgba(30,30,50,0.95);backdrop-filter:blur(10px);border-radius:14px 14px 0 0;padding:12px 16px;display:flex;gap:12px;justify-content:center}
+.share-btn{display:flex;flex-direction:column;align-items:center;gap:2px}
+.share-btn .icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.85rem}
+.share-btn .label{color:#a0a0b8;font-size:0.4rem;text-align:center;line-height:1.1}
+.share-btn.highlight .icon{background:var(--green);box-shadow:0 0 12px rgba(34,197,94,0.5)}
+.share-btn.highlight .label{color:#fff;font-weight:600}
+
+/* Arrow / Pointer */
+.arrow-pointer{position:absolute;bottom:56px;right:16px;color:var(--green);font-size:0.75rem;font-weight:700;text-align:right;z-index:2}
+.arrow-pointer::after{content:'↓';display:block;font-size:1.2rem}
+
+/* Annotation callouts */
+.callout{background:#f0fdf4;border-left:3px solid var(--green);border-radius:0 8px 8px 0;padding:10px 14px;margin:8px 0;font-size:0.8rem;color:#166534;line-height:1.4}
+.callout strong{display:block;margin-bottom:2px;color:#15803d}
+.callout.warn{background:#fef3c7;border-left-color:#f59e0b;color:#92400e}
+.callout.warn strong{color:#b45309}
+
+/* Feature Cards */
+.features{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px;margin:20px 0}
+.feature{background:var(--card);border-radius:14px;padding:14px;text-align:center;box-shadow:0 1px 8px rgba(0,0,0,0.05)}
+.feature .icon{font-size:1.8rem;margin-bottom:4px}
+.feature .title{font-size:0.8rem;font-weight:700}
+.feature .desc{font-size:0.7rem;color:var(--muted);margin-top:2px}
+
+/* CTA */
+.cta-section{text-align:center;padding:24px 20px 40px}
+.cta-section p{color:var(--muted);font-size:0.85rem;margin-bottom:16px}
+.cta-btn{display:inline-block;background:linear-gradient(135deg,var(--green),var(--purple));color:#fff;text-decoration:none;padding:16px 36px;border-radius:14px;font-size:1.05rem;font-weight:700;box-shadow:0 4px 20px rgba(34,197,94,0.3)}
+
+.footer{text-align:center;padding:0 20px 32px;color:var(--muted);font-size:0.7rem}
+.footer a{color:var(--green);text-decoration:none;font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-icon">🥗</div>
+  <h1>CleanEats</h1>
+  <p>Find healthy, GF & keto food & drinks near you</p>
+  <a href="https://cleaneats-eta.vercel.app" class="open-btn">Open CleanEats →</a>
+</div>
+
+<!-- Video Walkthrough -->
+<div class="section" style="padding-top:8px">
+  <div class="video-wrap">
+    <video autoplay loop muted playsinline poster="/walkthrough-poster.jpg">
+      <source src="/walkthrough-highlight.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="video-label">📹 Watch: 15-second walkthrough</div>
+</div>
+
+<!-- What You Get -->
+<div class="features">
+  <div class="feature">
+    <div class="icon">🌾</div>
+    <div class="title">Gluten-Free</div>
+    <div class="desc">GF menus, options & celiac-safe</div>
+  </div>
+  <div class="feature">
+    <div class="icon">🥑</div>
+    <div class="title">Keto Friendly</div>
+    <div class="desc">Low-carb & sugar-free spots</div>
+  </div>
+  <div class="feature">
+    <div class="icon">☕</div>
+    <div class="title">Clean Drinks</div>
+    <div class="desc">Coffee, boba, smoothies & more</div>
+  </div>
+  <div class="feature">
+    <div class="icon">📍</div>
+    <div class="title">Works Anywhere</div>
+    <div class="desc">Search by location or zip code</div>
+  </div>
+</div>
+
+<!-- iPhone Steps -->
+<div class="section">
+  <div class="section-label">
+    <span class="badge">🍎 iPhone</span>
+    <h2>Save to Home Screen</h2>
+  </div>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <h3>Open in Safari</h3>
+      <p>Tap the button above to open CleanEats, or type the link into Safari. <strong>Must use Safari</strong> — Chrome and Firefox won't work for this.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <h3>Tap the Share button</h3>
+      <p>Look for the square icon with the arrow pointing up — it's at the <strong>bottom of the screen</strong>.</p>
+      <img src="/screenshot-step1.png" alt="Safari with share button highlighted" style="width:100%;max-width:260px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.15);margin:8px auto;display:block">
+      <div class="callout">It's the button at the very bottom center of Safari — looks like a box with an arrow pointing up.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <h3>Tap "Add to Home Screen"</h3>
+      <p>Scroll down in the share menu until you see this icon with the plus sign.</p>
+      <img src="/screenshot-step2.png" alt="Share sheet with Add to Home Screen highlighted" style="width:100%;max-width:260px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.15);margin:8px auto;display:block">
+      <div class="callout">If you don't see it, scroll down in the share menu — it's usually in the second row of icons.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      <h3>Tap "Add" in the top right</h3>
+      <p>You can rename it if you want, then tap the blue <strong>Add</strong> button.</p>
+    </div>
+  </div>
+
+  <div class="step" style="background:linear-gradient(135deg,#f0fdf4,#ede9fe);border:2px solid var(--green)">
+    <div class="step-num">✓</div>
+    <div class="step-content">
+      <h3>Done! 🎉</h3>
+      <p>CleanEats is now on your home screen. Tap it anytime — it works like a real app, even offline for places you've already searched.</p>
+      <div class="phone" style="max-width:180px">
+        <div class="phone-screen">
+          <div class="phone-status"><div class="bar" style="width:40px"></div></div>
+          <div class="phone-body" style="flex-wrap:wrap;gap:8px;justify-content:flex-start;padding:12px">
+            <div style="text-align:center;width:44px"><div style="font-size:1.4rem">🥗</div><div style="color:#e0e0f0;font-size:0.35rem">CleanEats</div></div>
+            <div style="text-align:center;width:44px"><div style="font-size:1.4rem">📞</div><div style="color:#e0e0f0;font-size:0.35rem">Phone</div></div>
+            <div style="text-align:center;width:44px"><div style="font-size:1.4rem">💬</div><div style="color:#e0e0f0;font-size:0.35rem">Messages</div></div>
+            <div style="text-align:center;width:44px"><div style="font-size:1.4rem">📷</div><div style="color:#e0e0f0;font-size:0.35rem">Camera</div></div>
+          </div>
+          <div class="phone-bottom"><div class="phone-home-bar"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Android Steps -->
+<div class="section">
+  <div class="section-label">
+    <span class="badge">🤖 Android</span>
+    <h2>Save to Home Screen</h2>
+  </div>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <h3>Open in Chrome</h3>
+      <p>Tap the button above or type the link into Chrome on your Android phone.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <h3>Tap the ⋮ menu (top right)</h3>
+      <p>Or if you see a banner at the bottom that says "Add to Home screen," tap that instead — it's even faster.</p>
+      <div class="callout">Some Android phones show an "Install" or "Add to Home screen" banner automatically when you visit the site. If you see it, just tap that!</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <h3>Tap "Add to Home Screen"</h3>
+      <p>Confirm the name and tap <strong>Add</strong>.</p>
+    </div>
+  </div>
+
+  <div class="step" style="background:linear-gradient(135deg,#f0fdf4,#ede9fe);border:2px solid var(--green)">
+    <div class="step-num">✓</div>
+    <div class="step-content">
+      <h3>Done! 🎉</h3>
+      <p>CleanEats is on your home screen now. Tap it anytime to find clean food & drinks nearby.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Tips -->
+<div class="section">
+  <div class="callout">
+    <strong>💡 Pro Tip</strong>
+    The home screen version works just like a real app — full screen, no browser bar, and it remembers your searches offline.
+  </div>
+  <div class="callout">
+    <strong>🔐 Premium Users</strong>
+    If you already upgraded to Premium in the browser, just open the app and tap "Restore Purchase" — it'll unlock everything on your home screen too.
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <p>Ready to find clean food & drinks?</p>
+  <a href="https://cleaneats-eta.vercel.app" class="cta-btn">Open CleanEats →</a>
+</div>
+
+<div class="footer">
+  Built with 💚 by <a href="https://brandbooststudio.co">BrandBoost Studio</a><br>
+</div>
+
+</div>
+
+<script>
+// Auto-scroll to the right section based on device
+if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+  document.querySelector('.badge').textContent = '🍎 iPhone';
+} else {
+  document.querySelector('.badge').textContent = '🤖 Android';
+}
+</script>
+
+</body>
+</html>

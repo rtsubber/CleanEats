@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CleanEats — Can't Decide? We Pick.</title>
+<meta name="description" content="Can't decide where to eat healthy? CleanEats picks for you. One tap, one perfect gluten-free or healthy restaurant.">
+<link rel="canonical" href="https://cleaneats.co/decide">
+<meta property="og:title" content="CleanEats Decider — We Pick So You Don't Have To">
+<meta property="og:description" content="One tap. One perfect healthy restaurant. No more 'where should we eat?'">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://cleaneats.co/decide">
+<meta property="og:image" content="https://cleaneats.co/cleaneats-og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--green:#22c55e;--green-dark:#16a34a;--purple:#6366f1;--bg:#0a0a1a;--card:#12122a;--text:#e0e0f0;--muted:#8890a8}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.app{max-width:480px;margin:0 auto;min-height:100vh;position:relative;display:flex;flex-direction:column}
+
+/* Header */
+.header{text-align:center;padding:40px 20px 20px}
+.header .emoji{font-size:4rem;animation:bounce 2s infinite}
+.header h1{font-size:1.6rem;font-weight:800;margin-top:12px;background:linear-gradient(135deg,var(--green) 0%,var(--purple) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:var(--muted);font-size:0.95rem;margin-top:8px;line-height:1.5}
+
+/* Preferences */
+.prefs{padding:0 20px;margin-top:10px}
+.prefs h3{font-size:0.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.pref-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.pref-btn{padding:12px 8px;border:2px solid #2a2a4a;border-radius:12px;background:var(--card);color:var(--muted);font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;text-align:center}
+.pref-btn:hover{border-color:var(--green);color:var(--text)}
+.pref-btn.active{border-color:var(--green);background:rgba(34,197,94,0.15);color:var(--green)}
+.pref-btn .icon{font-size:1.4rem;display:block;margin-bottom:4px}
+
+/* The Big Button */
+.decide-section{flex:1;display:flex;align-items:center;justify-content:center;padding:20px}
+.decide-btn{width:200px;height:200px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--green) 0%,var(--purple) 100%);color:#fff;font-size:1.4rem;font-weight:800;cursor:pointer;transition:all 0.3s;box-shadow:0 8px 32px rgba(34,197,94,0.3);position:relative;overflow:hidden}
+.decide-btn:hover{transform:scale(1.05);box-shadow:0 12px 40px rgba(34,197,94,0.4)}
+.decide-btn:active{transform:scale(0.95)}
+.decide-btn.spinning{animation:spin-pulse 0.5s ease-in-out}
+.decide-btn.spinning .btn-text{opacity:0}
+.decide-btn.spinning .btn-spinner{opacity:1}
+.btn-text{transition:opacity 0.2s}
+.btn-spinner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;font-size:3rem}
+
+/* Result Card */
+.result{padding:0 20px 120px;display:none}
+.result.show{display:block;animation:slideUp 0.4s ease-out}
+.result-card{background:var(--card);border:1px solid #2a2a4a;border-radius:20px;overflow:hidden}
+.result-header{text-align:center;padding:30px 20px 20px;position:relative}
+.result-header .result-emoji{font-size:3rem;margin-bottom:8px}
+.result-header h2{font-size:1.3rem;font-weight:700}
+.result-header .result-rating{display:inline-flex;align-items:center;gap:6px;margin-top:6px;background:var(--green);color:#fff;padding:4px 12px;border-radius:20px;font-size:0.85rem;font-weight:700}
+.result-header .result-price{color:var(--green);font-size:0.9rem;margin-left:6px}
+.result-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:0 20px;margin-bottom:16px}
+.tag{font-size:0.75rem;padding:4px 10px;border-radius:8px;font-weight:600}
+.tag.gf{background:#dcfce7;color:#166534}
+.tag.healthy{background:#dbeafe;color:#1e40af}
+.tag.vegan{background:#fce7f3;color:#9d174d}
+.tag.organic{background:#fef3c7;color:#92400e}
+.tag.keto{background:#ede9fe;color:#5b21b6}
+.result-details{padding:16px 20px;border-top:1px solid #2a2a4a}
+.result-details p{color:var(--muted);font-size:0.85rem;margin:4px 0;display:flex;align-items:center;gap:6px}
+.result-details .label{color:var(--text);font-weight:600;min-width:60px}
+.result-actions{display:flex;gap:10px;padding:16px 20px 20px}
+.result-actions a{flex:1;text-align:center;padding:14px;border-radius:14px;font-weight:700;text-decoration:none;font-size:0.9rem;transition:all 0.2s}
+.directions-btn{background:linear-gradient(135deg,var(--green),var(--purple));color:#fff}
+.directions-btn:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(34,197,94,0.3)}
+.retry-btn{background:#1a1a3a;color:var(--text);border:2px solid #2a2a4a}
+.retry-btn:hover{border-color:var(--purple);color:var(--purple)}
+
+/* Footer hint */
+.footer-hint{text-align:center;padding:20px;color:var(--muted);font-size:0.8rem}
+.footer-hint a{color:var(--purple);text-decoration:none}
+
+/* Animations */
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes spin-pulse{0%{transform:scale(1)}50%{transform:scale(1.05) rotate(5deg)}100%{transform:scale(1)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+/* Responsive */
+@media(min-width:481px){.app{box-shadow:0 0 40px rgba(0,0,0,0.3)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="emoji">🎲</div>
+    <h1>Can't Decide?</h1>
+    <p>Tell us what you're into and we'll pick the perfect spot. No more "where should we eat?"</p>
+  </div>
+
+  <!-- Preferences -->
+  <div class="prefs">
+    <h3>What matters to you?</h3>
+    <div class="pref-grid">
+      <button class="pref-btn active" data-pref="gf"><span class="icon">🌾</span>Gluten-Free</button>
+      <button class="pref-btn" data-pref="healthy"><span class="icon">🥗</span>Healthy</button>
+      <button class="pref-btn" data-pref="vegan"><span class="icon">🌱</span>Vegan</button>
+      <button class="pref-btn" data-pref="organic"><span class="icon">🌿</span>Organic</button>
+      <button class="pref-btn" data-pref="keto"><span class="icon">🥑</span>Keto</button>
+      <button class="pref-btn active" data-pref="any"><span class="icon">🍽️</span>Surprise Me</button>
+    </div>
+  </div>
+
+  <!-- The Big Button -->
+  <div class="decide-section">
+    <button class="decide-btn" id="decide-btn" onclick="decide()">
+      <span class="btn-text">DECIDE<br>FOR ME</span>
+      <span class="btn-spinner">🎰</span>
+    </button>
+  </div>
+
+  <!-- Result -->
+  <div class="result" id="result">
+    <div class="result-card">
+      <div class="result-header">
+        <div class="result-emoji" id="result-emoji">🍽️</div>
+        <h2 id="result-name">Loading...</h2>
+        <div>
+          <span class="result-rating" id="result-rating">4.5 ⭐</span>
+          <span class="result-price" id="result-price">$$</span>
+        </div>
+      </div>
+      <div class="result-tags" id="result-tags"></div>
+      <div class="result-details">
+        <p><span class="label">📍 Address</span> <span id="result-address">—</span></p>
+        <p><span class="label">📞 Phone</span> <span id="result-phone">—</span></p>
+        <p><span class="label">📏 Distance</span> <span id="result-distance">—</span></p>
+        <p><span class="label">📝 Type</span> <span id="result-type">—</span></p>
+      </div>
+      <div class="result-actions">
+        <a class="directions-btn" id="directions-link" href="#" target="_blank">🗺️ Get Directions</a>
+        <a class="retry-btn" href="#" onclick="decide(); return false;">🔄 Try Again</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-hint" id="footer-hint">
+    <a href="/">← Back to CleanEats Search</a>
+  </div>
+</div>
+
+<script>
+const API_BASE = window.location.origin + '/api';
+let preferences = ['gf', 'any'];
+let restaurants = [];
+
+// Preference toggles
+document.querySelectorAll('.pref-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (btn.dataset.pref === 'any') {
+      // "Surprise Me" toggles all
+      btn.classList.toggle('active');
+      if (btn.classList.contains('active')) {
+        document.querySelectorAll('.pref-btn:not([data-pref="any"])').forEach(b => b.classList.remove('active'));
+        preferences = ['any'];
+      }
+    } else {
+      // Deselect "Surprise Me" when choosing specific
+      document.querySelector('[data-pref="any"]').classList.remove('active');
+      btn.classList.toggle('active');
+      preferences = [...document.querySelectorAll('.pref-btn.active')].map(b => b.dataset.pref).filter(p => p !== 'any');
+      if (preferences.length === 0) {
+        document.querySelector('[data-pref="any"]').classList.add('active');
+        preferences = ['any'];
+      }
+    }
+  });
+});
+
+async function decide() {
+  const btn = document.getElementById('decide-btn');
+  const result = document.getElementById('result');
+  
+  // Hide previous result, show spinner
+  result.classList.remove('show');
+  btn.classList.add('spinning');
+  
+  // Pick a random filter or use preferences
+  const filter = preferences.includes('any') ? 'all' : preferences[Math.floor(Math.random() * preferences.length)];
+  
+  // Try to get location, fall back to random demo
+  let url = `${API_BASE}/search?filter=${filter}&offset=${Math.floor(Math.random() * 50)}`;
+  
+  try {
+    // Try geolocation first
+    const pos = await new Promise((resolve, reject) => {
+      if (!navigator.geolocation) return reject('no geo');
+      navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
+    });
+    url += `&lat=${pos.coords.latitude}&lng=${pos.coords.longitude}`;
+  } catch {
+    // No location - use random offset for variety
+    url += `&offset=${Math.floor(Math.random() * 8)}`;
+  }
+  
+  try {
+    const res = await fetch(url);
+    restaurants = await res.json();
+    
+    if (!restaurants || restaurants.length === 0) {
+      throw new Error('No restaurants found');
+    }
+    
+    // Pick a random restaurant
+    const pick = restaurants[Math.floor(Math.random() * restaurants.length)];
+    showResult(pick);
+  } catch (err) {
+    // Fallback: pick from demo data
+    const fallback = [
+      { name: 'The Green Kitchen', rating: 4.7, price: '$$', distance: 800, address: '123 Health Ave', phone: '(512) 555-0101', gf: true, healthy: true, organic: true, keto: true, vegan: false, tags: ['gf','healthy','organic','keto'], categories: 'Gluten-Free, Healthy, Salad' },
+      { name: 'Fresh Bowl Co.', rating: 4.5, price: '$$', distance: 1200, address: '456 Clean St', phone: '(512) 555-0102', gf: true, healthy: true, vegan: true, organic: false, keto: false, tags: ['gf','healthy','vegan'], categories: 'Vegan, Gluten-Free, Juice Bar' },
+      { name: 'Nourish Cafe', rating: 4.8, price: '$$$', distance: 2400, address: '789 Wellness Blvd', phone: '(512) 555-0103', gf: true, healthy: true, organic: true, keto: true, tags: ['gf','healthy','organic','keto'], categories: 'Organic, Farm-to-Table, Gluten-Free' },
+      { name: 'Pure GF Bakery', rating: 4.9, price: '$$', distance: 1800, address: '555 Wheat-Free Ln', phone: '(512) 555-0105', gf: true, healthy: false, tags: ['gf'], categories: 'Bakeries, Gluten-Free' },
+      { name: 'Earth Bowl', rating: 4.6, price: '$$', distance: 1500, address: '222 Veggie Way', phone: '(512) 555-0107', gf: true, healthy: true, vegan: true, organic: true, tags: ['gf','healthy','vegan','organic'], categories: 'Vegan, Vegetarian, Organic' },
+      { name: 'Keto Kitchen', rating: 4.4, price: '$$$', distance: 4200, address: '888 Low Carb Dr', phone: '(512) 555-0106', gf: true, healthy: true, keto: true, tags: ['gf','healthy','keto'], categories: 'Keto, Paleo, Healthy' },
+    ];
+    
+    // Filter by preferences
+    let filtered = fallback;
+    if (!preferences.includes('any')) {
+      filtered = fallback.filter(r => preferences.some(p => r.tags && r.tags.includes(p)));
+    }
+    
+    const pick = filtered[Math.floor(Math.random() * filtered.length)];
+    showResult(pick);
+  }
+  
+  btn.classList.remove('spinning');
+}
+
+function showResult(r) {
+  const emojis = ['🎯', '✨', '🎉', '🥗', '🍽️', '💚', '🥑', '🌟'];
+  document.getElementById('result-emoji').textContent = emojis[Math.floor(Math.random() * emojis.length)];
+  document.getElementById('result-name').textContent = r.name;
+  document.getElementById('result-rating').textContent = `${r.rating || '4.5'} ⭐ · ${r.review_count || ''} reviews`;
+  document.getElementById('result-price').textContent = r.price || '$$';
+  document.getElementById('result-address').textContent = r.address || 'Address not available';
+  document.getElementById('result-phone').textContent = r.phone || '—';
+  document.getElementById('result-distance').textContent = r.distance ? `${(r.distance * 0.000621371).toFixed(1)} miles away` : 'Nearby';
+  document.getElementById('result-type').textContent = r.categories || 'Healthy & Gluten-Free';
+  document.getElementById('directions-link').href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(r.address || r.name)}`;
+  
+  // Tags
+  const tagsEl = document.getElementById('result-tags');
+  tagsEl.innerHTML = '';
+  if (r.tags) {
+    r.tags.forEach(tag => {
+      const labels = { gf: '🌾 Gluten-Free', healthy: '🥗 Healthy', vegan: '🌱 Vegan', organic: '🌿 Organic', keto: '🥑 Keto' };
+      const el = document.createElement('span');
+      el.className = `tag ${tag}`;
+      el.textContent = labels[tag] || tag;
+      tagsEl.appendChild(el);
+    });
+  }
+  
+  // Show with animation
+  document.getElementById('result').classList.add('show');
+  document.querySelector('.decide-section').style.display = 'none';
+  document.querySelector('.footer-hint').style.display = 'block';
+}
+</script>
+</body>
+</html>

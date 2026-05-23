@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CleanEats - Healthy & Gluten-Free Restaurants Near You</title>
+<meta name="description" content="Find healthy, gluten-free restaurants near you. CleanEats locates the best GF-friendly and health-focused dining options around you.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CleanEats">
+<meta name="theme-color" content="#22c55e">
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="https://cleaneats.co">
+<meta property="og:title" content="CleanEats - Find Healthy & Gluten-Free Restaurants Near You">
+<meta property="og:description" content="Discover gluten-free and healthy restaurants instantly. Auto-detect your location or search any area.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://cleaneats.co">
+<meta property="og:image" content="https://cleaneats.co/cleaneats-og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥗</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--green:#22c55e;--green-dark:#16a34a;--purple:#6366f1;--bg:#f8faf9;--card:#fff;--text:#1a1a2e;--muted:#64748b;--border:#e2e8f0;--radius:16px;--shadow:0 2px 16px rgba(0,0,0,0.08)}
+[data-theme="dark"]{--bg:#0a0a1a;--card:#12122a;--text:#e0e0f0;--muted:#8890a8;--border:#2a2a4a;--shadow:0 2px 16px rgba(0,0,0,0.3)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased;transition:background 0.3s,color 0.3s}
+.app{max-width:480px;margin:0 auto;min-height:100vh;position:relative;display:flex;flex-direction:column}
+
+/* Header */
+.header{background:linear-gradient(135deg,var(--green) 0%,var(--purple) 100%);color:#fff;padding:16px 16px 12px;position:sticky;top:0;z-index:100}
+[data-theme="dark"] .header{background:linear-gradient(135deg,#166534 0%,#4338ca 100%)}
+.header-top{display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:1.3rem;font-weight:800;display:flex;align-items:center;gap:6px}
+.header h1 .emoji{font-size:1.1rem}
+.theme-toggle{background:rgba(255,255,255,0.2);border:none;border-radius:8px;padding:6px 10px;font-size:1rem;cursor:pointer;color:#fff;transition:background 0.2s}
+.theme-toggle:hover{background:rgba(255,255,255,0.3)}
+.tab-bar{display:flex;gap:6px;margin-top:10px}
+.tab-btn{display:none}
+.search-bar{display:flex;gap:8px;margin-top:10px;position:relative}
+.search-input-wrap{flex:1;position:relative;display:flex;align-items:center}.search-input-wrap input{width:100%;padding:10px 38px 10px 14px;border:none;border-radius:12px;font-size:0.9rem;background:rgba(255,255,255,0.2);color:#fff;outline:none}.search-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:linear-gradient(135deg,var(--green),var(--purple));color:#fff;border:none;width:28px;height:28px;border-radius:8px;font-size:0.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;z-index:2}
+.search-bar input::placeholder{color:rgba(255,255,255,0.7)}
+.locate-btn{background:#fff;color:var(--purple);border:none;border-radius:12px;padding:0 12px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center}
+.locate-btn.loading{animation:pulse 1s infinite}
+
+/* Controls bar */
+.controls-bar{display:flex;gap:8px;padding:8px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;align-items:center}
+.controls-bar::-webkit-scrollbar{display:none}
+.filter-chip{white-space:nowrap;padding:6px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.78rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.2s}
+.filter-chip:hover{border-color:var(--green)}
+.filter-chip.active{background:var(--green);color:#fff;border-color:var(--green)}
+.open-now-toggle{white-space:nowrap;padding:6px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:0.78rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.2s}
+.open-now-toggle.active{background:#f59e0b;color:#fff;border-color:#f59e0b}
+
+/* Sort + Distance */
+.sort-bar{display:flex;gap:6px;padding:4px 16px 8px;align-items:center;font-size:0.78rem;color:var(--muted)}
+.sort-btn{padding:4px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card);font-size:0.75rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s}
+.sort-btn.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+.dist-slider{flex:1;margin:0 8px;accent-color:var(--green);height:4px}
+.dist-label{font-weight:600;min-width:32px}
+
+/* Pages */
+.page{display:none;flex:1;padding-bottom:64px}
+.page.active{display:block}
+
+/* Map */
+.map-container{width:100%;height:280px;background:linear-gradient(135deg,#f0fdf4,#ede9fe);border-radius:var(--radius);margin:0 0 10px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:0.85rem;overflow:hidden}
+.map-container iframe{width:100%;height:100%;border:none;border-radius:var(--radius)}
+
+/* Results */
+.results{padding:0 16px}
+.results-header{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:0.82rem;color:var(--muted)}
+.results-header strong{color:var(--text)}
+
+/* Restaurant Card */
+.restaurant-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden;transition:transform 0.2s,background 0.3s}
+.restaurant-card:hover{transform:translateY(-1px)}
+.card-image{width:100%;height:120px;object-fit:cover;background:linear-gradient(135deg,#f0fdf4,#ede9fe);display:flex;align-items:center;justify-content:center;font-size:2rem;position:relative}
+.card-fav{position:absolute;top:8px;right:8px;background:rgba(255,255,255,0.9);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;transition:all 0.2s;z-index:1}
+.card-ffav{background:rgba(255,255,255,0.9);transform:scale(1.1)}
+.card-fav:hover{transform:scale(1.15)}
+.card-fav.saved{background:#ef4444;color:#fff}
+.card-body{padding:10px 14px}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start}
+.card-name{font-size:0.92rem;font-weight:700;flex:1;margin-right:8px}
+.card-rating{background:var(--green);color:#fff;padding:2px 7px;border-radius:8px;font-size:0.75rem;font-weight:700;white-space:nowrap}
+.card-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px}
+.tag{font-size:0.68rem;padding:2px 6px;border-radius:5px;font-weight:600}
+.tag.gf{background:#dcfce7;color:#166534}[data-theme="dark"] .tag.gf{background:#16653433;color:#4ade80}
+.tag.gfmenu{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}[data-theme="dark"] .tag.gfmenu{background:#16653433;color:#86efac}
+.tag.gfopt{background:#fef9c3;color:#854d0e;border:1px solid #fde68a}[data-theme="dark"] .tag.gfopt{background:#854d0e33;color:#fde68a}
+.tag.healthy{background:#dbeafe;color:#1e40af}[data-theme="dark"] .tag.healthy{background:#1e40af33;color:#60a5fa}
+.tag.vegan{background:#fce7f3;color:#9d174d}[data-theme="dark"] .tag.vegan{background:#9d174d33;color:#f472b6}
+.tag.organic{background:#fef3c7;color:#92400e}[data-theme="dark"] .tag.organic{background:#92400e33;color:#fbbf24}
+.tag.keto{background:#ede9fe;color:#5b21b6}[data-theme="dark"] .tag.keto{background:#5b21b633;color:#a78bfa}
+.card-meta{display:flex;gap:8px;margin-top:6px;font-size:0.78rem;color:var(--muted)}
+.card-meta .distance{color:var(--purple);font-weight:600}
+.card-meta .price{color:var(--green)}
+.card-meta .open{color:var(--green);font-weight:600}
+.card-meta .closed{color:#ef4444;font-weight:600}
+.card-address{font-size:0.75rem;color:var(--muted);margin-top:3px}
+.card-actions{display:flex;gap:6px;margin-top:8px}
+.card-actions a{flex:1;text-align:center;padding:7px;border-radius:10px;font-size:0.8rem;font-weight:600;text-decoration:none;transition:all 0.15s}
+.directions{background:var(--green);color:#fff}
+.directions:hover{background:var(--green-dark)}
+.order{background:linear-gradient(135deg,#ff6b35,#ff4444);color:#fff}
+.order:hover{opacity:0.9}
+.call{background:var(--card);color:var(--text);border:1px solid var(--border)}
+.call:hover{background:var(--border)}
+
+/* Detail Modal */
+.detail-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;align-items:flex-end;justify-content:center;animation:fadeIn 0.2s}
+.detail-overlay.show{display:flex}
+.detail-panel{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;animation:slideUp 0.3s ease-out}
+.detail-close{position:sticky;top:0;background:var(--card);text-align:right;padding:8px 16px 0;z-index:1}
+.detail-close button{background:none;border:none;font-size:1.5rem;color:var(--muted);cursor:pointer;padding:4px 8px;border-radius:8px}
+.detail-close button:hover{background:var(--border)}
+.detail-hero{width:100%;height:200px;background:linear-gradient(135deg,#f0fdf4,#ede9fe);display:flex;align-items:center;justify-content:center;font-size:4rem}
+[data-theme="dark"] .detail-hero{background:linear-gradient(135deg,#0f1f15,#1a1535)}
+.detail-content{padding:0 20px 24px}
+.detail-content h2{font-size:1.3rem;font-weight:700;margin-bottom:4px}
+.detail-rating-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.detail-stars{background:var(--green);color:#fff;padding:4px 12px;border-radius:12px;font-size:0.85rem;font-weight:700}
+.detail-price{color:var(--green);font-weight:700;font-size:1rem}
+.detail-reviews{color:var(--muted);font-size:0.85rem}
+.detail-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.detail-info{border-top:1px solid var(--border);padding-top:12px}
+.detail-info p{color:var(--muted);font-size:0.88rem;margin:8px 0;display:flex;align-items:flex-start;gap:8px}
+.detail-info .icon{font-size:1.1rem;min-width:20px}
+.detail-info strong{color:var(--text)}
+.detail-actions{display:flex;gap:8px;margin-top:16px}
+.detail-actions a{flex:1;text-align:center;padding:14px 8px;border-radius:14px;font-weight:700;text-decoration:none;font-size:0.85rem;transition:all 0.15s;white-space:nowrap}
+.detail-directions{background:linear-gradient(135deg,var(--green),var(--purple));color:#fff}
+.detail-directions:hover{box-shadow:0 4px 16px rgba(34,197,94,0.3)}
+.detail-order{background:linear-gradient(135deg,#ff6b35,#ff4444);color:#fff}
+.detail-order:hover{box-shadow:0 4px 16px rgba(255,68,68,0.3)}
+.detail-website{background:var(--card);color:var(--text);border:1.5px solid var(--border)}
+.detail-website:hover{background:var(--border)}
+.detail-call{background:var(--card);color:var(--text);border:1.5px solid var(--border)}
+.detail-call:hover{background:var(--border)}
+.detail-fav{background:var(--card);color:var(--text);border:1.5px solid var(--border);min-width:44px}
+.detail-fav:hover{background:var(--border)}
+.detail-fav.saved{background:#ef4444;color:#fff;border-color:#ef4444}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* Decider */
+.decide-page{padding:16px;text-align:center}
+.decide-page .emoji{font-size:3rem;animation:bounce 2s infinite}
+.decide-page h2{font-size:1.2rem;font-weight:800;margin-top:8px;background:linear-gradient(135deg,var(--green),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.decide-page p{color:var(--muted);font-size:0.85rem;margin-top:4px}
+
+/* Premium Page Dark Mode */
+[data-theme="dark"] .premium-section{background:#12122a;border-color:#2a2a4a}
+[data-theme="dark"] .premium-section h3{color:#4ade80}
+[data-theme="dark"] .premium-section .premium-price{color:#e0e0f0}
+
+.pref-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:14px 0}
+.pref-btn{padding:10px 4px;border:2px solid var(--border);border-radius:12px;background:var(--card);font-size:0.78rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.2s;text-align:center}
+.pref-btn .icon{font-size:1.2rem;display:block;margin-bottom:2px}
+.pref-btn.active{border-color:var(--green);background:rgba(34,197,94,0.1);color:var(--green)}
+.decide-btn{width:160px;height:160px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--green),var(--purple));color:#fff;font-size:1.2rem;font-weight:800;cursor:pointer;transition:all 0.3s;box-shadow:0 8px 32px rgba(34,197,94,0.3);margin:16px auto;display:flex;align-items:center;justify-content:center}
+.decide-btn:hover{transform:scale(1.05)}
+.decide-btn:active{transform:scale(0.95)}
+.decide-btn.spinning{animation:spin-pulse 0.5s ease-in-out}
+.result-card{background:var(--card);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;display:none;margin-top:16px}
+.result-card.show{display:block;animation:slideUp 0.4s ease-out}
+.result-header-inner{padding:20px 16px 10px;text-align:center}
+.result-emoji{font-size:2rem;margin-bottom:4px}
+.result-name{font-size:1.1rem;font-weight:700}
+.result-rating-line{margin-top:4px;display:flex;align-items:center;justify-content:center;gap:6px}
+.result-stars{background:var(--green);color:#fff;padding:2px 8px;border-radius:10px;font-size:0.78rem;font-weight:700}
+.result-price{color:var(--green);font-weight:600;font-size:0.85rem}
+.result-tags{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;padding:0 16px;margin:6px 0}
+.result-details{padding:8px 16px;border-top:1px solid var(--border)}
+.result-details p{color:var(--muted);font-size:0.78rem;margin:2px 0}
+.result-details .label{font-weight:600;display:inline-block;width:22px}
+.result-actions{display:flex;gap:8px;padding:10px 16px 16px}
+.result-actions a{flex:1;text-align:center;padding:10px;border-radius:12px;font-weight:700;text-decoration:none;font-size:0.85rem}
+.directions-btn{background:linear-gradient(135deg,var(--green),var(--purple));color:#fff}
+.retry-btn{background:var(--card);color:var(--text);border:1px solid var(--border)}
+
+/* About */
+.about-page{padding:16px;text-align:center;padding-bottom:80px}
+.about-page .logo{font-size:3rem;margin-bottom:6px}
+.about-page h2{background:linear-gradient(135deg,var(--green),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:1.3rem;font-weight:800}
+.about-section{background:var(--card);border-radius:16px;padding:16px;margin:12px 0;text-align:left;box-shadow:var(--shadow)}
+.about-section h3{font-size:0.95rem;font-weight:700;margin-bottom:6px}
+.about-section p{color:var(--muted);font-size:0.82rem;line-height:1.5}
+.feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.feature-item{background:#f0fdf4;border-radius:10px;padding:8px;font-size:0.75rem;font-weight:600;color:#166534;text-align:center}
+[data-theme="dark"] .feature-item{background:#16653422;color:#4ade80}
+[data-theme="dark"] .map-container{background:linear-gradient(135deg,#0f1f15,#1a1535)}
+[data-theme="dark"] .card-image{background:linear-gradient(135deg,#0f1f15,#1a1535)}
+[data-theme="dark"] .search-input-wrap input{background:rgba(255,255,255,0.12);color:#e0e0f0}
+[data-theme="dark"] .search-bar input::placeholder{color:rgba(255,255,255,0.5)}
+[data-theme="dark"] .locate-btn{background:rgba(255,255,255,0.15);color:#e0e0f0}[data-theme="dark"] .search-btn{background:linear-gradient(135deg,var(--green),var(--purple));color:#fff}
+[data-theme="dark"] .theme-toggle{background:rgba(255,255,255,0.12)}
+[data-theme="dark"] .filter-chip{background:var(--card);color:var(--muted);border-color:var(--border)}
+[data-theme="dark"] .filter-chip.active{background:var(--green);color:#fff}
+[data-theme="dark"] .open-now-toggle{background:var(--card);color:var(--muted);border-color:var(--border)}
+[data-theme="dark"] .open-now-toggle.active{background:#f59e0b;color:#fff}
+[data-theme="dark"] .sort-btn{background:var(--card);color:var(--muted);border-color:var(--border)}
+[data-theme="dark"] .sort-btn.active{background:var(--purple);color:#fff}
+[data-theme="dark"] .pref-btn{background:var(--card);color:var(--muted);border-color:var(--border)}
+[data-theme="dark"] .pref-btn.active{border-color:var(--green);background:rgba(34,197,94,0.15);color:var(--green)}
+[data-theme="dark"] .decide-btn{box-shadow:0 8px 32px rgba(34,197,94,0.2)}
+[data-theme="dark"] .card-fav{background:rgba(18,18,42,0.9)}
+[data-theme="dark"] .result-actions .call{background:var(--card);color:var(--text);border-color:var(--border)}
+[data-theme="dark"] .about-section{background:var(--card)}
+[data-theme="dark"] .privacy-box{background:var(--card);border-color:var(--border)}
+.privacy-box{background:var(--card);border-radius:12px;padding:10px;margin-top:10px;font-size:0.78rem;color:var(--muted);text-align:left;border:1px solid var(--border)}
+
+/* Favorites */
+.fav-empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.fav-empty .emoji{font-size:2.5rem;margin-bottom:8px}
+
+/* Bottom Nav */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--card);border-top:1px solid var(--border);display:flex;z-index:100}
+.nav-item{flex:1;padding:6px 0;text-align:center;text-decoration:none;color:var(--muted);font-size:0.65rem;font-weight:600;transition:color 0.2s}
+.nav-item.active{color:var(--green)}
+.nav-item .nav-icon{font-size:1.1rem;display:block;margin-bottom:1px}
+
+/* Loading/Empty */
+.loading{text-align:center;padding:30px 20px;color:var(--muted)}
+.loading .spinner{width:32px;height:32px;border:3px solid var(--border);border-top:3px solid var(--green);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 10px}
+.empty{text-align:center;padding:30px 20px;color:var(--muted)}
+.empty .emoji{font-size:2rem;margin-bottom:6px}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin-pulse{0%{transform:scale(1)}50%{transform:scale(1.05) rotate(5deg)}100%{transform:scale(1)}}
+@media(min-width:481px){.app{box-shadow:0 0 40px rgba(0,0,0,0.1)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-top">
+      <h1><span class="emoji">🥗</span> CleanEats</h1>
+      <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Toggle dark mode">🌙</button>
+    </div>
+    <div class="search-bar" id="search-bar" style="margin-top:10px">
+      <div class="search-input-wrap">
+        <input type="text" id="search-input" placeholder="Zip code or city...">
+        <button class="search-btn" id="search-btn" title="Search">🔍</button>
+      </div>
+      <button class="locate-btn" id="locate-btn" title="Use my location">📍</button>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="page active" id="page-search">
+    <div class="controls-bar" id="filters">
+      <button class="filter-chip active" data-filter="all" data-mode="food">All</button>
+      <button class="filter-chip" data-filter="gf" id="gf-filter-btn">🌾 GF 🔒</button>
+      <button class="filter-chip" data-filter="celiac" id="celiac-filter-btn">🛡️ Celiac-Safe 🔒</button>
+      <button class="filter-chip" data-filter="healthy">🥗 Healthy</button>
+      <button class="filter-chip" data-filter="vegan" id="vegan-filter-btn">🌱 Vegan 🔒</button>
+      <button class="filter-chip" data-filter="organic">🌿 Organic</button>
+      <button class="filter-chip" data-filter="keto" id="keto-filter-btn">🥑 Keto 🔒</button>
+      <button class="filter-chip" data-mode="drinks" data-filter="all" id="drinks-btn">☕ Drinks</button>
+      <button class="open-now-toggle" id="open-now-btn" onclick="toggleOpenNow()">🕐 Open Now</button>
+    </div>
+    <div id="drink-filters" class="controls-bar" style="display:none;padding:0 16px 4px">
+      <div style="display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch">
+        <button class="filter-chip active" data-filter="all" data-mode="drinks">☕ All Drinks</button>
+        <button class="filter-chip" data-filter="coffee" data-mode="drinks">☕ Coffee</button>
+        <button class="filter-chip" data-filter="protein" data-mode="drinks">💪 Protein</button>
+        <button class="filter-chip" data-filter="keto" data-mode="drinks">🥑 Keto</button>
+        <button class="filter-chip" data-filter="smoothie" data-mode="drinks">🥤 Smoothie</button>
+        <button class="filter-chip" data-filter="boba" data-mode="drinks">🧋 Boba</button>
+        <button class="filter-chip" data-filter="energy" data-mode="drinks">⚡ Energy</button>
+        <button class="filter-chip" data-mode="food" data-filter="all" id="back-to-food-btn" style="background:var(--card);border-color:var(--purple);color:var(--purple)">← Food</button>
+      </div>
+    </div>
+    <div class="sort-bar">
+      <span style="min-width:30px;font-weight:600">Sort:</span>
+      <button class="sort-btn active" data-sort="distance" onclick="setSort('distance')">📍</button>
+      <button class="sort-btn" data-sort="rating" onclick="setSort('rating')">⭐</button>
+      <button class="sort-btn" data-sort="price" onclick="setSort('price')">💰</button>
+      <button class="sort-btn" data-sort="name" onclick="setSort('name')">A-Z</button>
+      <input type="range" class="dist-slider" id="dist-slider" min="1" max="25" value="10" oninput="setDistance(this.value)">
+      <span class="dist-label" id="dist-label">10 mi</span>
+    </div>
+    <div class="map-container" id="map-container"><span id="map-placeholder">📍 Search to see restaurants on the map</span></div>
+    <div class="results">
+      <div class="results-header"><span id="results-count"><strong>0</strong> restaurants</span><span id="results-location"></span></div>
+      <div id="results-list"><div class="empty"><div class="emoji">🥗</div><h3>Find clean eats near you</h3><p>Enter a zip code or tap 📍</p></div></div>
+    </div>
+  </div>
+
+  <!-- DECIDER -->
+  <div class="page" id="page-decide">
+    <div class="decide-page">
+      <div class="emoji">🎲</div>
+      <h2>Can't Decide?</h2>
+      <p>We'll pick the perfect spot for you</p>
+      <div class="pref-grid" id="pref-grid">
+        <button class="pref-btn active" data-pref="gf"><span class="icon">🌾</span>GF</button>
+        <button class="pref-btn" data-pref="healthy"><span class="icon">🥗</span>Healthy</button>
+        <button class="pref-btn" data-pref="vegan"><span class="icon">🌱</span>Vegan</button>
+        <button class="pref-btn" data-pref="organic"><span class="icon">🌿</span>Organic</button>
+        <button class="pref-btn" data-pref="keto"><span class="icon">🥑</span>Keto</button>
+        <button class="pref-btn active" data-pref="any"><span class="icon">🍽️</span>Surprise</button>
+      </div>
+      <button class="decide-btn" id="decide-btn" onclick="decide()">DECIDE<br>FOR ME</button>
+      <div class="result-card" id="result-card">
+        <div class="result-header-inner"><div class="result-emoji" id="result-emoji">🍽️</div><div class="result-name" id="result-name">Loading...</div><div class="result-rating-line"><span class="result-stars" id="result-rating">4.5 ⭐</span><span class="result-price" id="result-price">$$</span></div></div>
+        <div class="result-tags" id="result-tags"></div>
+        <div class="result-details"><p><span class="label">📍</span> <span id="result-address">-</span></p><p><span class="label">📞</span> <span id="result-phone">-</span></p><p><span class="label">📏</span> <span id="result-distance">-</span></p><p><span class="label">📝</span> <span id="result-type">-</span></p></div>
+        <div class="result-actions"><a class="directions-btn" id="directions-link" href="#" target="_blank">🗺️ Directions</a><a class="retry-btn" href="#" onclick="decide();return false">🔄 Try Again</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAVORITES -->
+  <div class="page" id="page-favs">
+    <div style="padding:16px"><div class="results-header"><span><strong>Your Saved Restaurants</strong></span></div><div id="favs-list"></div></div>
+  </div>
+
+  <!-- PREMIUM -->
+  <div class="page" id="page-premium">
+    <div class="about-page">
+      <div class="logo">✨</div><h2>CleanEats Premium</h2><p style="color:var(--muted);font-size:0.88rem;margin-top:4px">Unlock the full GF dining experience</p>
+      
+      <div class="about-section" style="text-align:center;border:2px solid var(--green);position:relative">
+        <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;padding:2px 12px;border-radius:12px;font-size:0.7rem;font-weight:700">MOST POPULAR</div>
+        <h3 style="color:var(--green)">🌾 Monthly</h3>
+        <div style="font-size:2rem;font-weight:800;margin:8px 0">$2.99<span style="font-size:0.9rem;font-weight:400;color:var(--muted)">/mo</span></div>
+        <button onclick="checkout('monthly')" style="width:100%;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--green),var(--purple));color:#fff;font-size:0.95rem;font-weight:700;cursor:pointer;margin:8px 0">Upgrade Now</button>
+      </div>
+      
+      <div class="about-section" style="text-align:center">
+        <h3>📅 Yearly</h3>
+        <div style="font-size:2rem;font-weight:800;margin:8px 0">$24.99<span style="font-size:0.9rem;font-weight:400;color:var(--muted)">/yr</span></div>
+        <p style="font-size:0.78rem;color:var(--green);font-weight:600;margin:4px 0">Save 30% - just $2.08/mo</p>
+        <button onclick="checkout('yearly')" style="width:100%;padding:12px;border:none;border-radius:12px;background:var(--card);color:var(--text);border:1.5px solid var(--border);font-size:0.95rem;font-weight:700;cursor:pointer;margin:8px 0">Choose Yearly</button>
+      </div>
+      
+      <div class="about-section">
+        <h3>✨ What you get</h3>
+        <div style="text-align:left;font-size:0.85rem;line-height:2;color:var(--text)">
+          <div>🛡️ <strong>Celiac-safe filter</strong> - only dedicated GF kitchens</div>
+          <div>📋 <strong>Full menu details</strong> - see every GF item before you go</div>
+          <div>❤️ <strong>Unlimited saves</strong> - no 20-restaurant limit</div>
+          <div>📍 <strong>New restaurant alerts</strong> - know when GF spots open nearby</div>
+          <div>🔍 <strong>Priority search</strong> - expanded chain database (50+ chains)</div>
+          <div>🚫 <strong>No ads</strong> - clean, distraction-free experience</div>
+        </div>
+      </div>
+      
+      <div class="about-section" style="background:#f0fdf4;border:1px solid #bbf7d0">
+        <h3 style="color:#166534">🆓 Free tier includes</h3>
+        <div style="text-align:left;font-size:0.82rem;line-height:1.8;color:var(--muted)">
+          <div>🥗 Healthy filter</div>
+          <div>📍 Auto-locate + zip code search</div>
+          <div>🎲 Decider - can't decide? We pick</div>
+          <div>❤️ Save up to 3 favorites</div>
+          <div>📋 Basic restaurant details</div>
+        </div>
+      </div>
+
+      
+      <p style="margin-top:16px;color:var(--muted);font-size:0.72rem">Cancel anytime • Secure payments via Stripe</p>
+      <button onclick="restorePurchase()" id="restore-btn" style="margin-top:8px;background:none;border:1px solid var(--border);border-radius:10px;padding:8px 20px;color:var(--muted);font-size:0.78rem;cursor:pointer;transition:all 0.2s;width:100%">🔄 Restore Purchase</button>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="page" id="page-about">
+    <div class="about-page">
+      <div class="logo">🥗</div><h2>CleanEats</h2><p style="color:var(--muted);font-size:0.88rem;margin-top:4px">Healthy & Gluten-Free Restaurants Near You</p>
+      <div class="about-section"><h3>Find safe, healthy dining - instantly</h3><p>Discover gluten-free, healthy, vegan, organic, and keto-friendly restaurants near you. Powered by Yelp's 5+ million restaurant database with verified GF menu data for 25+ chain restaurants.</p></div>
+      <div class="about-section"><h3>Features</h3><div class="feature-grid"><div class="feature-item">🌾 Gluten-Free</div><div class="feature-item">🥗 Healthy</div><div class="feature-item">🌱 Vegan</div><div class="feature-item">🌿 Organic</div><div class="feature-item">🥑 Keto</div><div class="feature-item">📍 Auto-locate</div><div class="feature-item">❤️ Save Favs</div><div class="feature-item">🎲 Decide</div></div></div>
+      <div class="about-section" style="text-align:center;padding:12px"><button onclick="switchTab('premium')" style="padding:10px 24px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--green),var(--purple));color:#fff;font-size:0.9rem;font-weight:700;cursor:pointer">✨ Upgrade to Premium - $2.99/mo</button></div>
+      <div class="privacy-box">🔒 <strong>Privacy:</strong> Your location is only used to find nearby restaurants. Saved favorites are stored on your device. We never share your data. No sign-up required.</div>
+      <div style="text-align:center;margin-top:8px"><button onclick="switchTab('premium');setTimeout(()=>{document.getElementById('restore-btn').scrollIntoView({behavior:'smooth'})},300)" style="background:none;border:none;color:var(--muted);font-size:0.72rem;cursor:pointer;text-decoration:underline">Already purchased? Restore your subscription</button></div>
+      <p style="margin-top:16px;color:var(--muted);font-size:0.72rem">Powered by <a href="https://www.yelp.com" style="color:var(--purple);text-decoration:none;font-weight:600">Yelp</a><br>Built with 💚 by <a href="https://brandbooststudio.co" style="color:var(--purple)">BrandBoost Studio</a><br><span id="version" style="opacity:0.4;font-size:0.65rem">v2.1</span></p>
+      <div style="display:flex;gap:16px;justify-content:center;margin-top:12px">
+        <a href="https://www.linkedin.com/in/ron-sublett-353b3255" style="color:var(--muted);font-size:0.75rem;text-decoration:none">💼 LinkedIn</a>
+        <a href="https://x.com/RTSubber" style="color:var(--muted);font-size:0.75rem;text-decoration:none">🐦 X/Twitter</a>
+        <a href="https://www.facebook.com/share/1CtTcapPJP/?mibextid=wwXIfr" style="color:var(--muted);font-size:0.75rem;text-decoration:none">📱 Facebook</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="detail-overlay" id="detail-overlay" onclick="if(event.target===this)closeDetail()">
+    <div class="detail-panel" id="detail-panel">
+      <div class="detail-close"><button onclick="closeDetail()">✕</button></div>
+      <div class="detail-hero" id="detail-hero">🍽️</div>
+      <div class="detail-content">
+        <h2 id="detail-name">Restaurant</h2>
+        <div class="detail-rating-row">
+          <span class="detail-stars" id="detail-rating">4.5 ⭐</span>
+          <span class="detail-price" id="detail-price">$$</span>
+          <span class="detail-reviews" id="detail-reviews">0 reviews</span>
+        </div>
+        <div class="detail-tags" id="detail-tags"></div>
+        <div class="detail-info">
+          <p><span class="icon">📍</span> <span id="detail-address">Address</span></p>
+          <p><span class="icon">📞</span> <span id="detail-phone">Phone</span></p>
+          <p><span class="icon">📏</span> <span id="detail-distance">Distance</span></p>
+          <p><span class="icon">🍽️</span> <span id="detail-type">Cuisine</span></p>
+          <div id="detail-gfnote-row" style="display:none;padding:10px 14px;background:#f0fdf4;border-radius:10px;margin:8px 0;font-size:0.82rem;color:#166534;line-height:1.5;border:1px solid #bbf7d0"><div id="detail-gfnote" style="font-weight:600;margin-bottom:4px"></div><div id="detail-gfitems" style="color:#15803d;font-size:0.78rem;margin-bottom:4px"></div><div id="detail-celiac" style="font-size:0.72rem;color:#6b7280"></div></div>
+          <p id="detail-website-row" style="display:none"><span class="icon">🔗</span> <a id="detail-website" href="#" target="_blank" style="color:var(--purple);text-decoration:none;font-weight:600">Visit website</a></p>
+        </div>
+        <div class="detail-actions">
+          <a class="detail-directions" id="detail-dir" href="#" target="_blank">🗺️ Directions</a>
+          <a class="detail-order" id="detail-order" href="#" target="_blank">🛒 Order</a>
+          <a class="detail-call" id="detail-call" href="#">📞 Call</a>
+          <a class="detail-website" id="detail-web-btn" href="#" target="_blank" style="display:none">🌐 Website</a>
+          <a class="detail-fav" id="detail-fav" href="#" onclick="toggleDetailFav();return false">🤍</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <a href="#" class="nav-item active" data-tab="search" onclick="switchTab('search');return false"><span class="nav-icon">🔍</span>Search</a>
+    <a href="#" class="nav-item" data-tab="decide" onclick="switchTab('decide');return false"><span class="nav-icon">🎲</span>Decide</a>
+    <a href="#" class="nav-item" data-tab="favs" onclick="switchTab('favs');return false"><span class="nav-icon">❤️</span>Saved</a>
+    <a href="#" class="nav-item" data-tab="premium" onclick="switchTab('premium');return false"><span class="nav-icon">✨</span>Premium</a>
+    <a href="#" class="nav-item" data-tab="about" onclick="switchTab('about');return false"><span class="nav-icon">ℹ️</span>About</a>
+  </div>
+</div>
+
+<script>
+const API_BASE=window.location.origin+'/api';let currentLocation=null,currentFilter='all',allRestaurants=[],currentSort='distance',maxDistance=10,openNowOnly=false,favorites=JSON.parse(localStorage.getItem('cleaneats-favs')||'[]'),preferences=['gf','any'],isPremium=localStorage.getItem('cleaneats-premium')==='true',deviceId=localStorage.getItem('cleaneats-device-id')||(() => {const id='dev_'+Math.random().toString(36).substr(2,12);localStorage.setItem('cleaneats-device-id',id);return id})(),currentMode='food';
+
+// Trial system - 7-day free trial for new users
+const TRIAL_DAYS=7;
+const PREMIUM_FILTERS=['gf','celiac','vegan','keto'];
+let trialInfo=JSON.parse(localStorage.getItem('cleaneats-trial')||'null');
+if(!trialInfo){trialInfo={start:Date.now(),daysLeft:TRIAL_DAYS};localStorage.setItem('cleaneats-trial',JSON.stringify(trialInfo));}
+function isTrialActive(){if(isPremium)return true;const elapsed=(Date.now()-trialInfo.start)/(1000*60*60*24);return elapsed<=TRIAL_DAYS;}
+function trialDaysLeft(){if(isPremium)return null;const elapsed=(Date.now()-trialInfo.start)/(1000*60*60*24);return Math.max(0,Math.ceil(TRIAL_DAYS-elapsed));}
+function isPremiumFilter(filter){return PREMIUM_FILTERS.includes(filter);}
+
+// Check for premium success redirect
+if(window.location.search.includes('premium=success')){isPremium=true;localStorage.setItem('cleaneats-premium','true');window.history.replaceState({},'',window.location.pathname);}
+
+// Beta access - permanent premium for testers
+const BETA_CODES=['cleaneats2026','beta2026','gf2026','testfree'];const urlParams=new URLSearchParams(window.location.search);const betaParam=urlParams.get('beta')||localStorage.getItem('cleaneats-beta');if(betaParam&&BETA_CODES.includes(betaParam.toLowerCase())){isPremium=true;localStorage.setItem('cleaneats-premium','true');localStorage.setItem('cleaneats-beta',betaParam.toLowerCase());localStorage.removeItem('cleaneats-trial'); // beta users don't need trial tracking
+window.history.replaceState({},'',window.location.pathname);}
+
+// Update premium-gated filter buttons state
+function updateCeliacBtn(){const btn=document.getElementById('celiac-filter-btn');if(!btn)return;const hasAccess=isPremium||isTrialActive();if(hasAccess){btn.style.opacity='1';btn.title='Celiac-safe restaurants only';}else{btn.style.opacity='0.5';btn.title='Upgrade to Premium for celiac-safe filter';}}
+updateCeliacBtn();
+
+// Show/hide lock icons on premium filter chips
+function updateFilterLocks(){const hasAccess=isPremium||isTrialActive();['gf-filter-btn','celiac-filter-btn','vegan-filter-btn','keto-filter-btn'].forEach(id=>{const btn=document.getElementById(id);if(!btn)return;if(hasAccess){btn.textContent=btn.textContent.replace(' 🔒','');}else if(!btn.textContent.includes('🔒')){btn.textContent+=' 🔒';}});}
+updateFilterLocks();
+
+// Show trial banner
+function showTrialBanner(){if(isPremium)return;const days=trialDaysLeft();const banner=document.createElement('div');banner.id='trial-banner';banner.style.cssText='background:linear-gradient(135deg,#22c55e,#6366f1);color:#fff;padding:8px 16px;text-align:center;font-size:0.8rem;font-weight:600;cursor:pointer';if(days>0){banner.innerHTML=`✨ Premium trial: <strong>${days} day${days!==1?'s':''}</strong> left — all filters unlocked! <span style="text-decoration:underline;font-size:0.7rem">Keep it →</span>`;banner.onclick=()=>switchTab('premium');}else{banner.innerHTML='🔒 Premium trial ended — <span style="text-decoration:underline">upgrade</span> to unlock GF, keto & vegan filters';banner.onclick=()=>switchTab('premium');}const header=document.querySelector('.header');if(header)header.after(banner);}
+showTrialBanner();
+
+// Periodic trial check (every minute)
+setInterval(()=>{updateFilterLocks();updateCeliacBtn();const banner=document.getElementById('trial-banner');if(banner)banner.remove();showTrialBanner();},60000);
+
+// Premium checkout
+async function checkout(plan){if(!isPremium){try{const res=await fetch(API_BASE+'/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan,device_id:deviceId})});const data=await res.json();if(data.url){window.location.href=data.url;}else{alert('Checkout temporarily unavailable. Please try again.');}}catch(e){alert('Could not connect to payment service. Please try again later.');}}}
+
+// Restore purchase — verifies subscription status via Stripe
+async function restorePurchase(){const btn=document.getElementById('restore-btn');btn.textContent='🔄 Checking...';btn.disabled=true;try{const res=await fetch(API_BASE+'/subscription-status?device_id='+encodeURIComponent(deviceId));const data=await res.json();if(data.premium){isPremium=true;localStorage.setItem('cleaneats-premium','true');localStorage.removeItem('cleaneats-trial');btn.textContent='✅ Premium Restored!';btn.style.color='var(--green)';btn.style.borderColor='var(--green)';updatePremiumUI();setTimeout(()=>{btn.textContent='🔄 Restore Purchase';btn.style.color='';btn.style.borderColor='';},3000);}else{btn.textContent='❌ No purchase found';btn.style.color='#ef4444';btn.style.borderColor='#ef4444';setTimeout(()=>{btn.textContent='🔄 Restore Purchase';btn.style.color='';btn.style.borderColor='';},3000);}}catch(e){btn.textContent='❌ Connection error';setTimeout(()=>{btn.textContent='🔄 Restore Purchase';},3000);}finally{btn.disabled=false;}}
+
+function updatePremiumUI(){if(isPremium){document.querySelectorAll('.premium-badge,.premium-lock').forEach(el=>el.style.display='none');const filterChips=document.querySelectorAll('.filter-chip');filterChips.forEach(chip=>{if(PREMIUM_FILTERS.includes(chip.dataset.filter)){chip.classList.remove('locked');chip.style.opacity='1';}});}}
+
+// Premium feature gate — trial users get full access
+function requirePremium(feature){if(isPremium||isTrialActive())return true;switchTab('premium');return false;}
+
+// Drink mode switching
+function switchToDrinks(){currentMode='drinks';document.getElementById('filters').style.display='none';document.getElementById('drink-filters').style.display='flex';currentFilter='all';document.querySelectorAll('#drink-filters .filter-chip').forEach(c=>c.classList.remove('active'));document.querySelector('#drink-filters [data-filter="all"][data-mode="drinks"]').classList.add('active');drinkResultsCached=[]; // reset cache on mode switch
+if(currentLocation){searchRestaurants(currentLocation.lat,currentLocation.lng,currentLocation.name).then(()=>{drinkResultsCached=[...allRestaurants];});}else if(navigator.geolocation){navigator.geolocation.getCurrentPosition((pos)=>searchRestaurants(pos.coords.latitude,pos.coords.longitude,'Your Location').then(()=>{drinkResultsCached=[...allRestaurants];}),()=>{document.getElementById('results-list').innerHTML='<div class="empty"><div class="emoji">☕</div><h3>Find clean drinks nearby</h3><p>Enter a zip code or tap 📍 to find coffee, smoothies, protein shakes & more</p></div>';});}else{document.getElementById('results-list').innerHTML='<div class="empty"><div class="emoji">☕</div><h3>Find clean drinks nearby</h3><p>Enter a zip code or tap 📍 to find coffee, smoothies, protein shakes & more</p></div>';}}
+function switchToFood(){currentMode='food';document.getElementById('filters').style.display='flex';document.getElementById('drink-filters').style.display='none';currentFilter='all';document.querySelectorAll('#filters .filter-chip').forEach(c=>c.classList.remove('active'));document.querySelector('#filters [data-filter="all"][data-mode="food"]').classList.add('active');drinkResultsCached=[]; // clear drink cache
+if(currentLocation){searchRestaurants(currentLocation.lat,currentLocation.lng,currentLocation.name);}}
+
+function toggleTheme(){const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);localStorage.setItem('cleaneats-theme',t);document.getElementById('theme-btn').textContent=t==='dark'?'☀️':'🌙'}
+(function(){const t=localStorage.getItem('cleaneats-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');document.getElementById('theme-btn').textContent='☀️'}})();
+
+function switchTab(tab){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.getElementById('page-'+tab).classList.add('active');document.querySelector(`.nav-item[data-tab="${tab}"]`).classList.add('active');document.getElementById('search-bar').style.display=tab==='search'?'flex':'none';if(tab==='search'&&currentMode==='drinks'){document.getElementById('filters').style.display='none';document.getElementById('drink-filters').style.display='flex';}else if(tab==='search'){document.getElementById('filters').style.display='flex';document.getElementById('drink-filters').style.display='none';}if(tab==='favs')renderFavs();}
+// Bottom nav handles tab switching - no top tabs needed
+
+function toggleOpenNow(){openNowOnly=!openNowOnly;document.getElementById('open-now-btn').classList.toggle('active',openNowOnly);if(allRestaurants.length>0)renderResults();}
+
+function setSort(s){currentSort=s;document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.sort-btn[data-sort="${s}"]`).classList.add('active');if(allRestaurants.length>0)renderResults();}
+function setDistance(v){maxDistance=parseInt(v);document.getElementById('dist-label').textContent=v+' mi';if(allRestaurants.length>0)renderResults();}
+
+function toggleFav(id,name){const maxFavs=isPremium||isTrialActive()?999:3;if(favorites.length>=maxFavs&&!isFav(id)){requirePremium('unlimited-saves');return;}const idx=favorites.findIndex(f=>f.id===id);if(idx>=0){favorites.splice(idx,1);}else{favorites.push({id,name,saved:Date.now()});}localStorage.setItem('cleaneats-favs',JSON.stringify(favorites));if(allRestaurants.length>0)renderResults();}
+
+async function searchRestaurants(lat,lng,locationName){currentLocation={lat,lng,name:locationName};document.getElementById('results-list').innerHTML='<div class="loading"><div class="spinner"></div>Finding clean eats...</div>';try{const params=new URLSearchParams({lat,lng,filter:currentFilter,mode:currentMode});const res=await fetch(`${API_BASE}/search?${params}`);if(!res.ok)throw new Error('Search failed');allRestaurants=await res.json();renderResults();renderMap();}catch(err){document.getElementById('results-list').innerHTML='<div class="empty"><div class="emoji">😕</div><h3>Something went wrong</h3><p>Please try again</p></div>';}}
+
+async function searchByText(query){document.getElementById('results-list').innerHTML='<div class="loading"><div class="spinner"></div>Searching...</div>';try{const params=new URLSearchParams({q:query,filter:currentFilter,mode:currentMode});const res=await fetch(`${API_BASE}/search?${params}`);if(!res.ok)throw new Error('Search failed');allRestaurants=await res.json();if(allRestaurants.length>0&&allRestaurants[0].coordinates){currentLocation={lat:allRestaurants[0].coordinates.latitude,lng:allRestaurants[0].coordinates.longitude,name:query};}renderResults();renderMap();}catch(err){document.getElementById('results-list').innerHTML='<div class="empty"><div class="emoji">😕</div><h3>Something went wrong</h3><p>Please try again</p></div>';}}
+
+function useMyLocation(){const btn=document.getElementById('locate-btn');btn.classList.add('loading');if(!navigator.geolocation){alert('Geolocation not supported');btn.classList.remove('loading');return;}navigator.geolocation.getCurrentPosition((pos)=>{btn.classList.remove('loading');searchRestaurants(pos.coords.latitude,pos.coords.longitude,'Your Location');},()=>{btn.classList.remove('loading');alert('Could not get location. Enter a zip code.');},{enableHighAccuracy:true,timeout:10000});}
+
+function getDistance(r){return r.distance?r.distance*0.000621371:99999;}
+function isFav(id){return favorites.some(f=>f.id===id);}
+
+function getDeliveryUrl(r){const name=encodeURIComponent(r.name||"");const addr=encodeURIComponent(r.address||"");return `https://www.doordash.com/search/store/${name}?address=${addr}`;}
+function renderResults(){const list=document.getElementById('results-list');let filtered=currentFilter==='all'?allRestaurants:allRestaurants.filter(r=>{
+if(!r.tags)return false;
+if(r.tags.includes(currentFilter))return true;
+if(currentFilter==='gf'&&(r.tags.includes('gf_menu')||r.tags.includes('gf_options')))return true;
+if(currentFilter==='celiac')return r.celiac_safe&&(r.celiac_safe.includes('dedicated')||r.celiac_safe.includes('separate')||r.celiac_safe.includes('separate GF'));
+if(currentFilter==='keto')return r.keto||r.tags.includes('keto')||r.tags.includes('paleo');
+if(currentFilter==='healthy')return r.healthy||r.tags.includes('healthy');
+if(currentFilter==='vegan')return r.vegan||r.tags.includes('vegan');
+if(currentFilter==='organic')return r.organic||r.tags.includes('organic');
+// Drink sub-filter: match by drink_type
+if(currentMode==='drinks'&&r.drink_type&&Array.isArray(r.drink_type)&&r.drink_type.includes(currentFilter))return true;
+return false;
+});
+// In drinks mode with "all", filter out non-drink places
+if(currentMode==='drinks'&&currentFilter==='all'){filtered=filtered.filter(r=>!r.drink_type||!r.drink_type.includes('_nondrink'));}filtered=filtered.filter(r=>getDistance(r)<=maxDistance);if(openNowOnly){const h=new Date().getHours();filtered=filtered.filter(r=>{const c=r.categories||'';if(c.toLowerCase().includes('bar'))return h>=17||h<2;return h>=6&&h<22;});}
+if(currentSort==='rating')filtered.sort((a,b)=>(b.rating||0)-(a.rating||0));else if(currentSort==='price')filtered.sort((a,b)=>(a.price||'$$$$').length-(b.price||'$$$$').length);else if(currentSort==='name')filtered.sort((a,b)=>(a.name||'').localeCompare(b.name||''));else filtered.sort((a,b)=>getDistance(a)-getDistance(b));
+document.getElementById('results-count').innerHTML=`<strong>${filtered.length}</strong> restaurant${filtered.length!==1?'s':''}`;document.getElementById('results-location').textContent=currentLocation?`near ${currentLocation.name}`:'';if(filtered.length===0){list.innerHTML='<div class="empty"><div class="emoji">🔍</div><h3>No restaurants found</h3><p>Try expanding distance or changing filters</p></div>';return;}
+list.innerHTML=filtered.map((r,i)=>{const d=getDistance(r).toFixed(1);const heartClass=isFav(r.id)?'saved':'';const heartEmoji=isFav(r.id)?'❤️':'🤍';return`<div class="restaurant-card" style="animation-delay:${i*0.04}s" onclick="openDetail(allRestaurants.find(x=>x.id==='${r.id}'))"><div class="card-image" style="${sanitizeUrl(r.image_url)?`background-image:url(${sanitizeUrl(r.image_url)});background-size:cover;background-position:center`:''}">${!r.image_url?'🍽️':''}<button class="card-fav ${heartClass}" onclick="toggleFav('${r.id}','${escapeHtml(r.name).replace(/'/g,"\\'")}');event.stopPropagation()">${heartEmoji}</button></div><div class="card-body"><div class="card-top"><div class="card-name">${escapeHtml(r.name)}</div><div class="card-rating">${r.rating||'–'}</div></div><div class="card-tags">${r.gf?'<span class="tag gf">🌾 GF</span>':''}${r.gf_menu?'<span class="tag gfmenu">📋 GF Menu</span>':''}${r.gf_options&&!r.gf?'<span class="tag gfopt">⚠️ GF Options</span>':''}${r.healthy?'<span class="tag healthy">🥗 Healthy</span>':''}${r.vegan?'<span class="tag vegan">🌱 Vegan</span>':''}${r.organic?'<span class="tag organic">🌿 Organic</span>':''}${r.keto?'<span class="tag keto">🥑 Keto</span>':''}${(!r.gf&&!r.healthy&&!r.vegan&&!r.organic&&!r.keto)?'<span class="tag gf">✓</span>':''}</div><div class="card-meta"><span class="distance">${d} mi</span><span>${r.review_count||0} rev</span><span class="price">${r.price||'$$'}</span></div><div class="card-address">${escapeHtml(r.address||'')}</div></div></div>`;}).join('');}
+
+function renderFavs(){const list=document.getElementById('favs-list');if(favorites.length===0){list.innerHTML='<div class="fav-empty"><div class="emoji">❤️</div><h3>No saved restaurants yet</h3><p>Tap the heart on any restaurant to save it here</p></div>';return;}
+const favRestaurants=allRestaurants.filter(r=>isFav(r.id));if(favRestaurants.length>0){list.innerHTML=favRestaurants.map((r,i)=>{const d=getDistance(r).toFixed(1);return`<div class="restaurant-card"><div class="card-image" style="${sanitizeUrl(r.image_url)?`background-image:url(${sanitizeUrl(r.image_url)});background-size:cover;background-position:center`:''}">${!r.image_url?'🍽️':''}<button class="card-fav saved" onclick="toggleFav('${r.id}','${escapeHtml(r.name).replace(/'/g,"\\'")}');renderFavs()">❤️</button></div><div class="card-body"><div class="card-top"><div class="card-name">${escapeHtml(r.name)}</div><div class="card-rating">${r.rating||'–'}</div></div><div class="card-meta"><span class="distance">${d} mi</span><span class="price">${r.price||'$$'}</span></div><div class="card-actions"><a class="directions" href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(r.address||r.name)}" target="_blank">🗺️ Go</a></div></div></div>`;}).join('');}else{list.innerHTML=`<div class="fav-empty"><div class="emoji">📍</div><h3>Search first to see your saved spots</h3><p>Your saves will appear here with directions</p></div>`;}}
+
+function renderMap(){if(!currentLocation||allRestaurants.length===0)return;const{lat,lng}=currentLocation;const mapUrl=`https://www.openstreetmap.org/export/embed.html?bbox=${lng-0.08}%2C${lat-0.06}%2C${lng+0.08}%2C${lat+0.06}&layer=mapnik&marker=${lat}%2C${lng}`;document.getElementById('map-container').innerHTML=`<iframe src="${mapUrl}" style="width:100%;height:100%;border:none;border-radius:var(--radius)" loading="lazy"></iframe>`;}
+
+document.getElementById('filters').addEventListener('click',(e)=>{if(e.target.classList.contains('open-now-toggle'))return;const chip=e.target.closest('.filter-chip');if(!chip)return;if(chip.dataset.filter==='celiac'&&!isPremium&&!isTrialActive()){requirePremium('celiac');return;}if(isPremiumFilter(chip.dataset.filter)&&!isPremium&&!isTrialActive()){requirePremium(chip.dataset.filter);return;}if(chip.dataset.mode==='drinks'){switchToDrinks();return;}document.querySelectorAll('#filters .filter-chip').forEach(c=>c.classList.remove('active'));chip.classList.add('active');currentFilter=chip.dataset.filter;if(allRestaurants.length>0)renderResults();});
+document.getElementById('search-input').addEventListener('keydown',(e)=>{if(e.key==='Enter'){const q=e.target.value.trim();if(q)searchByText(q);}});
+document.getElementById('search-btn').addEventListener('click',()=>{const q=document.getElementById('search-input').value.trim();if(q)searchByText(q);});
+document.getElementById('locate-btn').addEventListener('click',useMyLocation);
+
+// Drink filters click handler
+// When switching drink sub-filters, just re-filter existing results (no new API call)
+// Only do a new API search when first entering drinks mode or when no results exist yet
+let drinkResultsCached = []; // cache "all drinks" results
+
+document.getElementById('drink-filters').addEventListener('click',(e)=>{const chip=e.target.closest('.filter-chip');if(!chip)return;if(chip.dataset.mode==='food'){switchToFood();if(currentLocation){searchRestaurants(currentLocation.lat,currentLocation.lng,currentLocation.name);}return;}document.querySelectorAll('#drink-filters .filter-chip').forEach(c=>c.classList.remove('active'));chip.classList.add('active');currentFilter=chip.dataset.filter;currentMode='drinks';
+// If we have cached drink results and filter is a sub-filter, just re-render
+if(drinkResultsCached.length>0&&currentFilter!=='all'){allRestaurants=drinkResultsCached;renderResults();return;}
+// For "all drinks" or no cache, do a fresh API search
+if(currentLocation){searchRestaurants(currentLocation.lat,currentLocation.lng,currentLocation.name).then(()=>{if(currentFilter==='all')drinkResultsCached=[...allRestaurants];});}else if(navigator.geolocation){navigator.geolocation.getCurrentPosition((pos)=>searchRestaurants(pos.coords.latitude,pos.coords.longitude,'Your Location').then(()=>{if(currentFilter==='all')drinkResultsCached=[...allRestaurants];}),()=>{});}else{searchByText('drinks near me');}});
+
+async function decide(){const btn=document.getElementById('decide-btn');document.getElementById('result-card').classList.remove('show');btn.classList.add('spinning');const filter=preferences.includes('any')?'all':preferences[Math.floor(Math.random()*preferences.length)];let url=`${API_BASE}/search?filter=${filter}&offset=${Math.floor(Math.random()*50)}`;try{const pos=await new Promise((resolve,reject)=>{if(!navigator.geolocation)return reject('no geo');navigator.geolocation.getCurrentPosition(resolve,reject,{timeout:5000});});url+=`&lat=${pos.coords.latitude}&lng=${pos.coords.longitude}`;}catch{}try{const res=await fetch(url);restaurants=await res.json();if(!restaurants||restaurants.length===0)throw new Error('No restaurants');const pick=restaurants[Math.floor(Math.random()*restaurants.length)];showResult(pick);}catch(err){const fallback=[{name:'The Green Kitchen',rating:4.7,price:'$$$',distance:800,address:'123 Health Ave',phone:'(512) 555-0101',gf:true,healthy:true,organic:true,keto:true,tags:['gf','healthy','organic','keto'],categories:'Gluten-Free, Healthy'},{name:'Fresh Bowl Co.',rating:4.5,price:'$$',distance:1200,address:'456 Clean St',phone:'(512) 555-0102',gf:true,healthy:true,vegan:true,tags:['gf','healthy','vegan'],categories:'Vegan, Gluten-Free'},{name:'Nourish Cafe',rating:4.8,price:'$$$',distance:2400,address:'789 Wellness Blvd',phone:'(512) 555-0103',gf:true,healthy:true,organic:true,tags:['gf','healthy','organic'],categories:'Organic, Farm-to-Table'},{name:'Pure GF Bakery',rating:4.9,price:'$$',distance:1800,address:'555 Wheat-Free Ln',phone:'(512) 555-0105',gf:true,tags:['gf'],categories:'Bakeries, Gluten-Free'},{name:'Earth Bowl',rating:4.6,price:'$$',distance:1500,address:'222 Veggie Way',phone:'(512) 555-0107',gf:true,healthy:true,vegan:true,organic:true,tags:['gf','healthy','vegan','organic'],categories:'Vegan, Organic'}];let filtered=fallback;if(!preferences.includes('any'))filtered=fallback.filter(r=>preferences.some(p=>r.tags&&r.tags.includes(p)));const pick=filtered[Math.floor(Math.random()*filtered.length)];showResult(pick);}btn.classList.remove('spinning');}
+
+function showResult(r){const emojis=['🎯','✨','🎉','🥗','🍽️','💚','🥑','🌟'];document.getElementById('result-emoji').textContent=emojis[Math.floor(Math.random()*emojis.length)];document.getElementById('result-name').textContent=r.name;document.getElementById('result-rating').textContent=`${r.rating||'4.5'} ⭐ · ${r.review_count||''}`;document.getElementById('result-price').textContent=r.price||'$$';document.getElementById('result-address').textContent=r.address||'Address not available';document.getElementById('result-phone').textContent=r.phone||'-';document.getElementById('result-distance').textContent=r.distance?`${(r.distance*0.000621371).toFixed(1)} miles`:'Nearby';document.getElementById('result-type').textContent=r.categories||'Healthy & Gluten-Free';document.getElementById('directions-link').href=`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(r.address||r.name)}`;const tagsEl=document.getElementById('result-tags');tagsEl.innerHTML='';if(r.tags)r.tags.forEach(tag=>{const labels={gf:'🌾 Gluten-Free',healthy:'🥗 Healthy',vegan:'🌱 Vegan',organic:'🌿 Organic',keto:'🥑 Keto'};const el=document.createElement('span');el.className=`tag ${tag}`;el.textContent=labels[tag]||tag;tagsEl.appendChild(el);});document.getElementById('result-card').classList.add('show');}
+
+document.getElementById('pref-grid').addEventListener('click',(e)=>{const btn=e.target.closest('.pref-btn');if(!btn)return;if(btn.dataset.pref==='any'){btn.classList.toggle('active');if(btn.classList.contains('active')){document.querySelectorAll('#pref-grid .pref-btn:not([data-pref="any"])').forEach(b=>b.classList.remove('active'));preferences=['any'];}}else{document.querySelector('#pref-grid .pref-btn[data-pref="any"]').classList.remove('active');btn.classList.toggle('active');preferences=[...document.querySelectorAll('#pref-grid .pref-btn.active')].map(b=>b.dataset.pref).filter(p=>p!=='any');if(preferences.length===0){document.querySelector('#pref-grid .pref-btn[data-pref="any"]').classList.add('active');preferences=['any'];}}});
+
+let currentDetailRestaurant=null;function openDetail(r){currentDetailRestaurant=r;document.getElementById('detail-hero').style.backgroundImage=sanitizeUrl(r.image_url)?`url(${sanitizeUrl(r.image_url)})`:'';document.getElementById('detail-hero').style.backgroundSize='cover';document.getElementById('detail-hero').style.backgroundPosition='center';document.getElementById('detail-hero').textContent=r.image_url?'':'🍽️';document.getElementById('detail-name').textContent=r.name;document.getElementById('detail-rating').textContent=`${r.rating||'4.5'} ⭐`;
+const priceCount=(r.price||'$$').length;let priceStr=r.price||'$$';if(!r.price&&r.categories){priceStr='$$';}
+document.getElementById('detail-price').textContent=priceStr;document.getElementById('detail-reviews').textContent=`${r.review_count||0} reviews`;
+const tagsEl=document.getElementById('detail-tags');tagsEl.innerHTML='';const tagMap={gf:'🌾 Gluten-Free',gfmenu:'📋 GF Menu',gfopt:'⚠️ GF Options',healthy:'🥗 Healthy',vegan:'🌱 Vegan',organic:'🌿 Organic',keto:'🥑 Keto'};
+if(r.tags)r.tags.forEach(t=>{const el=document.createElement('span');el.className=`tag ${t==='gf_menu'?'gfmenu':t==='gf_options'?'gfopt':t}`;el.textContent=tagMap[t]||t;tagsEl.appendChild(el);});
+document.getElementById('detail-address').textContent=r.address||'Address not available';
+document.getElementById('detail-phone').textContent=r.phone||'No phone listed';
+const phoneLink=document.getElementById('detail-call');if(r.phone){phoneLink.href=`tel:${r.phone}`;phoneLink.style.display='';}else{phoneLink.style.display='none';}
+document.getElementById('detail-distance').textContent=r.distance?`${(r.distance*0.000621371).toFixed(1)} miles away`:'Nearby';
+document.getElementById('detail-type').textContent=r.categories||'Restaurant';
+const gfnoteRow=document.getElementById('detail-gfnote-row');
+const gfnote=document.getElementById('detail-gfnote');
+if(r.gf_note||r.gf_items||r.celiac_safe){gfnoteRow.style.display='';gfnote.textContent=r.gf_note||'';document.getElementById('detail-gfitems').textContent=r.gf_items?'🥘 '+r.gf_items:'';document.getElementById('detail-celiac').textContent=r.celiac_safe?'🛡️ Celiac safety: '+r.celiac_safe:'';}else{gfnoteRow.style.display='none';}
+const webRow=document.getElementById('detail-website-row');const webLink=document.getElementById('detail-website');const webBtn=document.getElementById('detail-web-btn');if(r.url){webRow.style.display='';webLink.href=r.url;webLink.textContent='Visit website';webBtn.href=r.url;webBtn.style.display='';}else{webRow.style.display='none';webBtn.style.display='none';}
+document.getElementById('detail-dir').href=`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(r.address||r.name)}`;
+const orderBtn=document.getElementById('detail-order');orderBtn.href=getDeliveryUrl(r);
+const favBtn=document.getElementById('detail-fav');favBtn.textContent=isFav(r.id)?'❤️':'🤍';favBtn.className=isFav(r.id)?'detail-fav saved':'detail-fav';
+document.getElementById('detail-overlay').classList.add('show');}
+function closeDetail(){document.getElementById('detail-overlay').classList.remove('show');currentDetailRestaurant=null;}
+function toggleDetailFav(){if(!currentDetailRestaurant)return;toggleFav(currentDetailRestaurant.id,currentDetailRestaurant.name);const favBtn=document.getElementById('detail-fav');favBtn.textContent=isFav(currentDetailRestaurant.id)?'❤️':'🤍';favBtn.className=isFav(currentDetailRestaurant.id)?'detail-fav saved':'detail-fav';}
+
+function escapeHtml(text){const d=document.createElement('div');d.textContent=text;return d.innerHTML;}
+function sanitizeUrl(url){if(!url||typeof url!=='string')return '';try{const u=new URL(url);if(!['http:','https:'].includes(u.protocol))return '';return u.href;}catch(e){return '';}}
+
+window.addEventListener('load',()=>{if(navigator.geolocation){navigator.geolocation.getCurrentPosition((pos)=>searchRestaurants(pos.coords.latitude,pos.coords.longitude,'Your Location'),()=>{});}});
+
+// Register service worker for PWA
+if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(()=>{});}
+
+// Ensure beta premium persists for PWA/standalone mode
+if(isPremium){try{localStorage.setItem('cleaneats-premium','true');localStorage.setItem('cleaneats-beta',localStorage.getItem('cleaneats-beta')||'cleaneats2026');}catch(e){}}
+</script>
+</body>
+</html>

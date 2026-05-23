@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Vercel
+.vercel/
+
+# Environment / Secrets
+.env
+.env.local
+.env.production
+.env.*.local
+
+# Secrets
+*.key
+*.pem
+*.p12
+.secrets
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Screenshots (local only)
+screenshot-*.png
+screenshot-*.jpg
+
+# Logs
+*.log
