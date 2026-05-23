@@ -63,8 +63,8 @@ export default async function handler(req, res) {
         }
       ],
       metadata: { device_id: device_id || '', app: 'cleaneats' },
-      success_url: 'https://cleaneats-eta.vercel.app/?premium=success',
-      cancel_url: 'https://cleaneats-eta.vercel.app/?premium=cancel',
+      success_url: 'https://cleaneats-eta.vercel.app/?checkout=complete',
+      cancel_url: 'https://cleaneats-eta.vercel.app/?checkout=cancel',
     });
 
     return res.status(200).json({ url: session.url, session_id: session.id });
