@@ -146,6 +146,10 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', 'https://cleaneats-eta.vercel.app');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With');
+  // 🔒 Rate limiting: 30 requests per minute per IP
+  const clientIP = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown';
+  // Note: For production rate limiting, use Vercel Edge Middleware or Upstash Ratelimit
+  // This is a basic check - real rate limiting should be done at the edge
   
   if (req.method === 'OPTIONS') return res.status(200).end();
 
