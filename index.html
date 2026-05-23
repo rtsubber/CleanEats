@@ -285,7 +285,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="map-container" id="map-container"><span id="map-placeholder">📍 Search to see restaurants on the map</span></div>
     <div class="results">
       <div class="results-header"><span id="results-count"><strong>5M+</strong> restaurants powered by Yelp</span><span id="results-location"></span></div>
-      <div id="results-list"><div class="empty"><div class="emoji">🥗</div><h3>Finding clean eats near you...</h3><p>Allow location access or enter a zip code</p></div></div>
+      <div id="results-list"><div class="empty"><div class="emoji">🥗</div><h3>Finding clean eats near you...</h3><p>Allow location access or enter a zip code</p><p style="margin-top:10px"><a href="mailto:feedback@brandbooststudio.co?subject=Add%20a%20Restaurant&body=Restaurant%20name%3A%0AAddress%20or%20city%3A%0A%0AWhy%20should%20it%20be%20on%20CleanEats%3F%0A%0A-%20Gluten-free%20menu%3F%0A-Celiac-safe%20kitchen%3F%0A-Keto%2C%20vegan%2C%20organic%20options%3F" style="color:var(--purple);font-size:0.82rem;font-weight:600;text-decoration:none">🏪 Know a restaurant we're missing? Add it →</a></p></div></div>
     </div>
   </div>
 
@@ -414,7 +414,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
           <a class="detail-fav" id="detail-fav" href="#" onclick="toggleDetailFav();return false">🤍</a>
         </div>
         <div id="detail-feedback-row" style="margin-top:12px;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;text-align:center">
-          <a id="detail-feedback-link" href="#" style="color:var(--purple);font-size:0.82rem;font-weight:600;text-decoration:none">💬 Update GF info for this restaurant</a>
+          <a id="detail-feedback-link" href="#" style="color:var(--purple);font-size:0.82rem;font-weight:600;text-decoration:none;display:block">💬 Update GF info for this restaurant</a>
+          <a id="detail-report-link" href="#" style="color:var(--muted);font-size:0.75rem;font-weight:500;text-decoration:none;display:block;margin-top:6px">⚠️ Report closed or wrong info</a>
         </div>
       </div>
     </div>
@@ -595,7 +596,8 @@ const webRow=document.getElementById('detail-website-row');const webLink=documen
 document.getElementById('detail-dir').href=`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(r.address||r.name)}`;
 const orderBtn=document.getElementById('detail-order');orderBtn.href=sanitizeUrl(getDeliveryUrl(r))||'#';
 const favBtn=document.getElementById('detail-fav');favBtn.textContent=isFav(r.id)?'❤️':'🤍';favBtn.className=isFav(r.id)?'detail-fav saved':'detail-fav';
-const feedbackLink=document.getElementById('detail-feedback-link');if(feedbackLink){const subject=encodeURIComponent(`GF Info Update: ${r.name}`);const body=encodeURIComponent(`Restaurant: ${r.name}\nAddress: ${r.address||'N/A'}\n\nWhat GF/celiac-safe info should be updated?\n\n- Does this restaurant have a GF menu?\n- Is there a dedicated fryer?\n- Is the kitchen celiac-safe (no cross-contamination)?\n- Any specific GF items to add?`);feedbackLink.href=`mailto:feedback@brandbooststudio.co?subject=${subject}&body=${body}`;}
+const feedbackLink=document.getElementById('detail-feedback-link');if(feedbackLink){const subject=encodeURIComponent(`GF Info Update: ${r.name}`);const body=encodeURIComponent(`Restaurant: ${r.name}\nAddress: ${r.address||'N/A'}\n\nWhat GF/celiac-safe info should be updated?\n\n- Does this restaurant have a GF menu?\n- Is there a dedicated fryer?\n- Is the kitchen celiac-safe (no cross-contamination)?\n- Any specific GF items to add?\n- Any keto, vegan, or organic options?`);feedbackLink.href=`mailto:feedback@brandbooststudio.co?subject=${subject}&body=${body}`;}
+const reportLink=document.getElementById('detail-report-link');if(reportLink){const subject=encodeURIComponent(`Report Issue: ${r.name}`);const body=encodeURIComponent(`Restaurant: ${r.name}\nAddress: ${r.address||'N/A'}\n\nWhat's wrong?\n\n- Permanently closed?\n- Wrong address?\n- Wrong hours?\n- Wrong phone number?\n- Other issue?`);reportLink.href=`mailto:feedback@brandbooststudio.co?subject=${subject}&body=${body}`;}
 document.getElementById('detail-overlay').classList.add('show');}
 function closeDetail(){document.getElementById('detail-overlay').classList.remove('show');currentDetailRestaurant=null;}
 function toggleDetailFav(){if(!currentDetailRestaurant)return;toggleFav(currentDetailRestaurant.id,currentDetailRestaurant.name);const favBtn=document.getElementById('detail-fav');favBtn.textContent=isFav(currentDetailRestaurant.id)?'❤️':'🤍';favBtn.className=isFav(currentDetailRestaurant.id)?'detail-fav saved':'detail-fav';}
