@@ -576,7 +576,7 @@ function escapeHtml(text){const d=document.createElement('div');d.textContent=te
 function sanitizeUrl(url){if(!url||typeof url!=='string')return '';try{const u=new URL(url);if(!['http:','https:'].includes(u.protocol))return '';return u.href;}catch(e){return '';}}
 
 // 🔒 Event delegation for restaurant cards (replaces inline onclick)
-document.addEventListener('click',(e)=>{const card=e.target.closest('[data-rid]');if(card&&!e.target.closest('.card-fav')){const id=card.dataset.rid;const r=allRestaurants.find(x=>>x.id===id);if(r)openDetail(r);}const favBtn=e.target.closest('[data-fid]');if(favBtn){e.stopPropagation();const id=favBtn.dataset.fid;const name=favBtn.dataset.fname;toggleFav(id,name);if(document.getElementById('favs-list'))renderFavs();if(allRestaurants.length>0)renderResults();}});
+document.addEventListener('click',(e)=>{const card=e.target.closest('[data-rid]');if(card&&!e.target.closest('.card-fav')){const id=card.dataset.rid;const r=allRestaurants.find(x=>x.id===id);if(r)openDetail(r);}const favBtn=e.target.closest('[data-fid]');if(favBtn){e.stopPropagation();const id=favBtn.dataset.fid;const name=favBtn.dataset.fname;toggleFav(id,name);if(document.getElementById('favs-list'))renderFavs();if(allRestaurants.length>0)renderResults();}});
 
 // Restore link in About page
 document.getElementById('restore-link')?.addEventListener('click',()=>{switchTab('premium');setTimeout(()=>{document.getElementById('restore-btn')?.scrollIntoView({behavior:'smooth'});},300);});
