@@ -592,7 +592,7 @@ document.getElementById('detail-type').textContent=r.categories||'Restaurant';
 const gfnoteRow=document.getElementById('detail-gfnote-row');
 const gfnote=document.getElementById('detail-gfnote');
 if(r.gf_note||r.gf_items||r.celiac_safe){gfnoteRow.style.display='';gfnote.textContent=r.gf_note||'';document.getElementById('detail-gfitems').textContent=r.gf_items?'🥘 '+r.gf_items:'';document.getElementById('detail-celiac').textContent=r.celiac_safe?'🛡️ Celiac safety: '+r.celiac_safe:'';}else{gfnoteRow.style.display='none';}
-const webRow=document.getElementById('detail-website-row');const webLink=document.getElementById('detail-website');const webBtn=document.getElementById('detail-web-btn');if(r.url){webRow.style.display='';const safeUrl=sanitizeUrl(r.url);webLink.href=safeUrl||'#';webLink.textContent='Visit website';webBtn.href=safeUrl||'#';webBtn.style.display='';}else{webRow.style.display='none';webBtn.style.display='none';}
+const webRow=document.getElementById('detail-website-row');const webLink=document.getElementById('detail-website');if(r.url){webRow.style.display='';const safeUrl=sanitizeUrl(r.url);webLink.href=safeUrl||'#';webLink.textContent='Visit website';}else{webRow.style.display='none';}
 document.getElementById('detail-dir').href=`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(r.address||r.name)}`;
 const orderBtn=document.getElementById('detail-order');orderBtn.href=sanitizeUrl(getDeliveryUrl(r))||'#';
 const favBtn=document.getElementById('detail-fav');favBtn.textContent=isFav(r.id)?'❤️':'🤍';favBtn.className=isFav(r.id)?'detail-fav saved':'detail-fav';
