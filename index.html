@@ -253,7 +253,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="controls-bar" id="filters">
       <button class="filter-chip active" data-filter="all" data-mode="food">All</button>
       <button class="filter-chip" data-filter="gf" id="gf-filter-btn">🌾 GF 🔒</button>
-      <button class="filter-chip" data-filter="celiac" id="celiac-filter-btn">🛡️ Celiac-Safe 🔒</button>
+      <button class="filter-chip" data-filter="celiac" id="celiac-filter-btn" title="Dedicated GF kitchens only — no cross-contamination risk">🛡️ Celiac-Safe 🔒</button>
       <button class="filter-chip" data-filter="healthy">🥗 Healthy</button>
       <button class="filter-chip" data-filter="vegan" id="vegan-filter-btn">🌱 Vegan 🔒</button>
       <button class="filter-chip" data-filter="organic">🌿 Organic</button>
@@ -284,8 +284,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     </div>
     <div class="map-container" id="map-container"><span id="map-placeholder">📍 Search to see restaurants on the map</span></div>
     <div class="results">
-      <div class="results-header"><span id="results-count"><strong>0</strong> restaurants</span><span id="results-location"></span></div>
-      <div id="results-list"><div class="empty"><div class="emoji">🥗</div><h3>Find clean eats near you</h3><p>Enter a zip code or tap 📍</p></div></div>
+      <div class="results-header"><span id="results-count"><strong>5M+</strong> restaurants powered by Yelp</span><span id="results-location"></span></div>
+      <div id="results-list"><div class="empty"><div class="emoji">🥗</div><h3>Finding clean eats near you...</h3><p>Allow location access or enter a zip code</p></div></div>
     </div>
   </div>
 
@@ -375,7 +375,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="about-section" style="text-align:center;padding:12px"><button onclick="switchTab('premium')" style="padding:10px 24px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--green),var(--purple));color:#fff;font-size:0.9rem;font-weight:700;cursor:pointer">✨ Upgrade to Premium - $2.99/mo</button></div>
       <div class="privacy-box">🔒 <strong>Privacy:</strong> Your location is only used to find nearby restaurants. Saved favorites are stored on your device. We never share your data. No sign-up required.</div>
       <div style="text-align:center;margin-top:8px"><button id="restore-link" style="background:none;border:none;color:var(--muted);font-size:0.72rem;cursor:pointer;text-decoration:underline">Already purchased? Restore your subscription</button></div>
-      <p style="margin-top:16px;color:var(--muted);font-size:0.72rem">Powered by <a href="https://www.yelp.com" style="color:var(--purple);text-decoration:none;font-weight:600">Yelp</a><br>Built with 💚 by <a href="https://brandbooststudio.co" style="color:var(--purple)">BrandBoost Studio</a><br><span id="version" style="opacity:0.4;font-size:0.65rem">v2.1</span></p>
+      <p style="margin-top:16px;color:var(--muted);font-size:0.72rem">Powered by <a href="https://www.yelp.com" style="color:var(--purple);text-decoration:none;font-weight:600">Yelp</a><br>Built with 💚 by <a href="https://brandbooststudio.co" style="color:var(--purple)">BrandBoost Studio</a><br><span id="version" style="opacity:0.4;font-size:0.65rem">v2.2</span></p>
+      <div style="text-align:center;margin-top:8px"><a href="mailto:feedback@brandbooststudio.co?subject=CleanEats%20Feedback" style="color:var(--purple);font-size:0.78rem;font-weight:600;text-decoration:none">💬 Send Feedback</a></div>
       <div style="display:flex;gap:16px;justify-content:center;margin-top:12px">
         <a href="https://www.linkedin.com/in/ron-sublett-353b3255" style="color:var(--muted);font-size:0.75rem;text-decoration:none">💼 LinkedIn</a>
         <a href="https://x.com/RTSubber" style="color:var(--muted);font-size:0.75rem;text-decoration:none">🐦 X/Twitter</a>
