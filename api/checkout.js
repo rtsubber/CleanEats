@@ -1,5 +1,6 @@
 // CleanEats Premium — Stripe Checkout Session
 // Creates a Stripe Checkout session for premium subscription
+// Tracks UTM/affiliate source for attribution
 
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
 
@@ -38,13 +39,23 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { plan = 'monthly', device_id } = req.body;
+    const { plan = 'monthly', device_id, utm_source, utm_campaign, utm_medium, utm_content } = req.body;
     const selectedPlan = PLANS[plan];
     if (!selectedPlan) return res.status(400).json({ error: 'Invalid plan' });
 
     // Dynamic import for Stripe (Node 18+ ESM)
     const Stripe = (await import('stripe')).default;
     const stripe = new Stripe(STRIPE_SECRET_KEY);
+
+    // Build metadata with UTM tracking
+    const metadata = {
+      device_id: device_id || '',
+      app: 'cleaneats',
+      utm_source: utm_source || 'direct',
+      utm_campaign: utm_campaign || '',
+      utm_medium: utm_medium || '',
+      utm_content: utm_content || ''
+    };
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
@@ -62,7 +73,7 @@ export default async function handler(req, res) {
           quantity: 1
         }
       ],
-      metadata: { device_id: device_id || '', app: 'cleaneats' },
+      metadata,
       success_url: 'https://cleaneats-eta.vercel.app/?checkout=complete',
       cancel_url: 'https://cleaneats-eta.vercel.app/?checkout=cancel',
     });
