@@ -73,6 +73,9 @@ export default async function handler(req, res) {
           quantity: 1
         }
       ],
+      subscription_data: {
+        trial_period_days: 7
+      },
       metadata,
       success_url: 'https://cleaneats-eta.vercel.app/?checkout=complete',
       cancel_url: 'https://cleaneats-eta.vercel.app/?checkout=cancel',
