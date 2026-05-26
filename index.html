@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="impact-site-verification" value="6c05d299-d37c-40de-8fd4-60bbb5c99d9d">
+<meta name="impact-site-verification" value="38b84648-ccaf-43ca-89d9-c906f1d26d5f">
 <title>CleanEats - Healthy & Gluten-Free Restaurants Near You</title>
 <meta name="description" content="Find healthy, gluten-free restaurants near you. CleanEats locates the best GF-friendly and health-focused dining options around you.">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -10,6 +12,9 @@
 <meta name="apple-mobile-web-app-title" content="CleanEats">
 <meta name="theme-color" content="#22c55e">
 <link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192x192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/icon-512x512.png">
 <link rel="canonical" href="https://cleaneats.co">
 <meta property="og:title" content="CleanEats - Find Healthy & Gluten-Free Restaurants Near You">
 <meta property="og:description" content="Discover gluten-free and healthy restaurants instantly. Auto-detect your location or search any area.">
@@ -96,7 +101,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .card-meta .price{color:var(--green)}
 .card-meta .open{color:var(--green);font-weight:600}
 .card-meta .closed{color:#ef4444;font-weight:600}
-.card-address{font-size:0.75rem;color:var(--muted);margin-top:3px}
+.card-hours{font-size:0.75rem;color:var(--muted);margin-top:2px}.card-hours .open-status{font-weight:600;margin-right:4px}.card-hours .open-status.open{color:var(--green)}.card-hours .open-status.closed{color:#ef4444}.card-hours .hours-text{color:var(--muted)}
 .card-actions{display:flex;gap:6px;margin-top:8px}
 .card-actions a{flex:1;text-align:center;padding:7px;border-radius:10px;font-size:0.8rem;font-weight:600;text-decoration:none;transition:all 0.15s}
 .directions{background:var(--green);color:#fff}
@@ -233,6 +238,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </style>
 </head>
 <body>
+
+<div id="trial-welcome" style="display:none;position:fixed;top:0;left:0;right:0;z-index:600;background:linear-gradient(135deg,#166534,#4ade80);color:#fff;padding:12px 16px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.15);animation:slideDown 0.4s ease">
+  <div style="max-width:400px;margin:0 auto">
+    <div style="font-size:1.3rem;font-weight:800;margin-bottom:2px">&#127881; Welcome to CleanEats!</div>
+    <div style="font-size:0.85rem;opacity:0.95;margin-bottom:8px">You've got <strong>7 days of Premium free</strong> &#8212; all filters unlocked, unlimited saves, celiac-safe data. No card needed.</div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;font-size:0.75rem;opacity:0.9">
+      <span>&#127806; GF</span> &#183; <span>&#128737;&#65039; Celiac-Safe</span> &#183; <span>&#127793; Vegan</span> &#183; <span>&#129361; Keto</span> &#183; <span>&#10084;&#65039; Unlimited Saves</span>
+    </div>
+  </div>
+  <button onclick="dismissWelcome()" style="position:absolute;top:8px;right:12px;background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;opacity:0.7">&#10005;</button>
+</div>
 <div class="app">
   <div class="header">
     <div class="header-top">
@@ -411,6 +427,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
           <p><span class="icon">📞</span> <span id="detail-phone">Phone</span></p>
           <p><span class="icon">📏</span> <span id="detail-distance">Distance</span></p>
           <p><span class="icon">🍽️</span> <span id="detail-type">Cuisine</span></p>
+          <p id="detail-hours-row" style="display:none"><span class="icon">🕐</span> <span id="detail-hours"></span></p>
           <div id="detail-gfnote-row" style="display:none;padding:10px 14px;background:#f0fdf4;border-radius:10px;margin:8px 0;font-size:0.82rem;color:#166534;line-height:1.5;border:1px solid #bbf7d0"><div id="detail-gfnote" style="font-weight:600;margin-bottom:4px"></div><div id="detail-gfitems" style="color:#15803d;font-size:0.78rem;margin-bottom:4px"></div><div id="detail-celiac" style="font-size:0.72rem;color:#6b7280"></div></div>
           <p id="detail-website-row" style="display:none"><span class="icon">🔗</span> <a id="detail-website" href="#" target="_blank" style="color:var(--purple);text-decoration:none;font-weight:600">Visit website</a></p>
         </div>
@@ -511,6 +528,12 @@ updateFilterLocks();
 // Trial system: 7-day full access, then free tier with locked premium features
 
 
+
+function dismissWelcome(){const banner=document.getElementById('trial-welcome');if(banner){banner.style.transition='transform 0.3s ease,opacity 0.3s ease';banner.style.transform='translateY(-100%)';banner.style.opacity='0';document.body.style.paddingTop='0';setTimeout(()=>banner.remove(),300);}}
+
+// Show welcome banner for first-time trial users (shows once, auto-dismisses after 6s)
+(function(){const welcomed=localStorage.getItem('cleaneats-welcomed');if(!welcomed&&!isPremium){getUsageRecord().then(record=>{if(isTrialActive(record)){localStorage.setItem('cleaneats-welcomed','true');const banner=document.getElementById('trial-welcome');if(banner){banner.style.display='block';document.body.style.paddingTop=banner.offsetHeight+'px';setTimeout(()=>dismissWelcome(),6000);}}});}})();
+
 // Day 3-4 soft nudge banner
 async function showTrialNudge(){if(isPremium)return;const record=await getUsageRecord();if(!isTrialActive(record))return;const days=getTrialDaysLeft(record);if(days>4||days<=2)return;// Only show on days 3-4
 const dismissed=localStorage.getItem('cleaneats-nudge-dismissed');if(dismissed){const dismissedDay=parseInt(dismissed);if(dismissedDay===days)return;// Already dismissed this day
@@ -587,10 +610,10 @@ if(currentMode==='drinks'&&r.drink_type&&Array.isArray(r.drink_type)&&r.drink_ty
 return false;
 });
 // In drinks mode with "all", filter out non-drink places
-if(currentMode==='drinks'&&currentFilter==='all'){filtered=filtered.filter(r=>!r.drink_type||!r.drink_type.includes('_nondrink'));}filtered=filtered.filter(r=>getDistance(r)<=maxDistance);if(openNowOnly){const h=new Date().getHours();filtered=filtered.filter(r=>{const c=r.categories||'';if(c.toLowerCase().includes('bar'))return h>=17||h<2;return h>=6&&h<22;});}
+if(currentMode==='drinks'&&currentFilter==='all'){filtered=filtered.filter(r=>!r.drink_type||!r.drink_type.includes('_nondrink'));}filtered=filtered.filter(r=>getDistance(r)<=maxDistance);if(openNowOnly){filtered=filtered.filter(r=>r.is_open_now===true||(r.is_open_now===null&&(()=>{const h=new Date().getHours();const c=r.categories||'';if(c.toLowerCase().includes('bar'))return h>=17||h<2;return h>=6&&h<22;})()));}
 if(currentSort==='rating')filtered.sort((a,b)=>(b.rating||0)-(a.rating||0));else if(currentSort==='price')filtered.sort((a,b)=>(a.price||'$$$$').length-(b.price||'$$$$').length);else if(currentSort==='name')filtered.sort((a,b)=>(a.name||'').localeCompare(b.name||''));else filtered.sort((a,b)=>getDistance(a)-getDistance(b));
 document.getElementById('results-count').innerHTML=`<strong>${filtered.length}</strong> restaurant${filtered.length!==1?'s':''}`;document.getElementById('results-location').textContent=currentLocation?`near ${currentLocation.name}`:'';if(filtered.length===0){list.innerHTML='<div class="empty"><div class="emoji">🔍</div><h3>No restaurants found</h3><p>Try expanding distance or changing filters</p></div>';return;}
-list.innerHTML=filtered.map((r,i)=>{const d=getDistance(r).toFixed(1);const heartClass=isFav(r.id)?'saved':'';const heartEmoji=isFav(r.id)?'❤️':'🤍';return`<div class="restaurant-card" style="animation-delay:${i*0.04}s" data-rid="${escapeHtml(r.id)}"><div class="card-image" style="${sanitizeUrl(r.image_url)?`background-image:url(${sanitizeUrl(r.image_url)});background-size:cover;background-position:center`:''}">${!r.image_url?'🍽️':''}<button class="card-fav ${heartClass}" data-fid="${escapeHtml(r.id)}" data-fname="${escapeHtml(r.name)}">${heartEmoji}</button></div><div class="card-body"><div class="card-top"><div class="card-name">${escapeHtml(r.name)}</div><div class="card-rating">${r.rating||'–'}</div></div><div class="card-tags">${r.gf?'<span class="tag gf">🌾 GF</span>':''}${r.gf_menu?'<span class="tag gfmenu">📋 GF Menu</span>':''}${r.gf_options&&!r.gf?'<span class="tag gfopt">⚠️ GF Options</span>':''}${r.healthy?'<span class="tag healthy">🥗 Healthy</span>':''}${r.vegan?'<span class="tag vegan">🌱 Vegan</span>':''}${r.organic?'<span class="tag organic">🌿 Organic</span>':''}${r.keto?'<span class="tag keto">🥑 Keto</span>':''}${(!r.gf&&!r.healthy&&!r.vegan&&!r.organic&&!r.keto)?'<span class="tag gf">✓</span>':''}</div><div class="card-meta"><span class="distance">${d} mi</span><span>${r.review_count||0} rev</span><span class="price">${r.price||'$$'}</span></div><div class="card-address">${escapeHtml(r.address||'')}</div></div></div>`;}).join('');}
+list.innerHTML=filtered.map((r,i)=>{const d=getDistance(r).toFixed(1);const heartClass=isFav(r.id)?'saved':'';const heartEmoji=isFav(r.id)?'❤️':'🤍';const todayD=new Date().getDay();const todayYelp=todayD===0?6:todayD-1;const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];const todayName=dayNames[todayYelp];const todayHours=r.hours?r.hours[todayName]:null;const isOpen=r.is_open_now;const openLabel=isOpen===true?'Open':isOpen===false?'Closed':'';const openClass=isOpen===true?'open':isOpen===false?'closed':'';const hoursLine=isOpen!==null&&isOpen!==undefined?`<div class="card-hours"><span class="open-status ${openClass}">${openLabel}</span>${todayHours?`<span class="hours-text">${todayHours}</span>`:''}</div>`:(todayHours?`<div class="card-hours"><span class="hours-text">${todayHours}</span></div>`:'');return`<div class="restaurant-card" style="animation-delay:${i*0.04}s" data-rid="${escapeHtml(r.id)}"><div class="card-image" style="${sanitizeUrl(r.image_url)?`background-image:url(${sanitizeUrl(r.image_url)});background-size:cover;background-position:center`:''}">${!r.image_url?'🍽️':''}<button class="card-fav ${heartClass}" data-fid="${escapeHtml(r.id)}" data-fname="${escapeHtml(r.name)}">${heartEmoji}</button></div><div class="card-body"><div class="card-top"><div class="card-name">${escapeHtml(r.name)}</div><div class="card-rating">${r.rating||'–'}</div></div><div class="card-tags">${r.gf?'<span class="tag gf">🌾 GF</span>':''}${r.gf_menu?'<span class="tag gfmenu">📋 GF Menu</span>':''}${r.gf_options&&!r.gf?'<span class="tag gfopt">⚠️ GF Options</span>':''}${r.healthy?'<span class="tag healthy">🥗 Healthy</span>':''}${r.vegan?'<span class="tag vegan">🌱 Vegan</span>':''}${r.organic?'<span class="tag organic">🌿 Organic</span>':''}${r.keto?'<span class="tag keto">🥑 Keto</span>':''}${(!r.gf&&!r.healthy&&!r.vegan&&!r.organic&&!r.keto)?'<span class="tag gf">✓</span>':''}</div><div class="card-meta"><span class="distance">${d} mi</span><span>${r.review_count||0} rev</span><span class="price">${r.price||'$$'}</span></div>${hoursLine}<div class="card-address">${escapeHtml(r.address||'')}</div></div></div>`;}).join('');}
 
 function renderFavs(){const list=document.getElementById('favs-list');if(favorites.length===0){list.innerHTML='<div class="fav-empty"><div class="emoji">❤️</div><h3>No saved restaurants yet</h3><p>Tap the heart on any restaurant to save it here</p></div>';return;}
 const favRestaurants=allRestaurants.filter(r=>isFav(r.id));if(favRestaurants.length>0){list.innerHTML=favRestaurants.map((r,i)=>{const d=getDistance(r).toFixed(1);return`<div class="restaurant-card" data-rid="${escapeHtml(r.id)}"><div class="card-image" style="${sanitizeUrl(r.image_url)?`background-image:url(${sanitizeUrl(r.image_url)});background-size:cover;background-position:center`:''}">${!r.image_url?'🍽️':''}<button class="card-fav saved" data-fid="${escapeHtml(r.id)}" data-fname="${escapeHtml(r.name)}">❤️</button></div><div class="card-body"><div class="card-top"><div class="card-name">${escapeHtml(r.name)}</div><div class="card-rating">${r.rating||'–'}</div></div><div class="card-meta"><span class="distance">${d} mi</span><span class="price">${r.price||'$$'}</span></div><div class="card-actions"><a class="directions" href="${sanitizeUrl(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(r.address||r.name)}`)}" target="_blank" rel="noopener">🗺️ Go</a></div></div></div>`;}).join('');}else{list.innerHTML=`<div class="fav-empty"><div class="emoji">📍</div><h3>Search first to see your saved spots</h3><p>Your saves will appear here with directions</p></div>`;}}
@@ -629,6 +652,16 @@ document.getElementById('detail-phone').textContent=r.phone||'No phone listed';
 const phoneLink=document.getElementById('detail-call');if(r.phone){phoneLink.href=sanitizeUrl('tel:'+r.phone)||('tel:'+r.phone.replace(/[^+0-9]/g,''));phoneLink.style.display='';}else{phoneLink.style.display='none';}
 document.getElementById('detail-distance').textContent=r.distance?`${(r.distance*0.000621371).toFixed(1)} miles away`:'Nearby';
 document.getElementById('detail-type').textContent=r.categories||'Restaurant';
+const hoursRow=document.getElementById('detail-hours-row');
+const hoursEl=document.getElementById('detail-hours');
+if(r.hours){hoursRow.style.display='';
+const todayD=new Date().getDay();
+const todayYelp=todayD===0?6:todayD-1;
+const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const todayName=dayNames[todayYelp];
+const todayHours=r.hours[todayName]||'No hours';
+const openLabel=r.is_open_now===true?' <span style="color:var(--green);font-weight:700">Open</span>':r.is_open_now===false?' <span style="color:#ef4444;font-weight:700">Closed</span>':'';
+hoursEl.innerHTML=todayHours+'\u003cbr\u003e\u003cspan style="font-size:0.72rem;color:var(--muted)"\u003e'+Object.entries(r.hours).map(([d,h])=>d+': '+h).join(' · ')+'\u003c/span\u003e'+openLabel;}else if(r.is_open_now!==null&&r.is_open_now!==undefined){hoursRow.style.display='';hoursEl.innerHTML=r.is_open_now?'\u003cspan style="color:var(--green);font-weight:700"\u003eOpen now\u003c/span\u003e':'\u003cspan style="color:#ef4444;font-weight:700"\u003eClosed now\u003c/span\u003e';}else{hoursRow.style.display='none';}
 const gfnoteRow=document.getElementById('detail-gfnote-row');
 const gfnote=document.getElementById('detail-gfnote');
 if(r.gf_note||r.gf_items||r.celiac_safe){gfnoteRow.style.display='';gfnote.textContent=r.gf_note||'';document.getElementById('detail-gfitems').textContent=r.gf_items?'🥘 '+r.gf_items:'';document.getElementById('detail-celiac').textContent=r.celiac_safe?'🛡️ Celiac safety: '+r.celiac_safe:'';}else{gfnoteRow.style.display='none';}
@@ -638,9 +671,11 @@ const orderBtn=document.getElementById('detail-order');orderBtn.href=sanitizeUrl
 const favBtn=document.getElementById('detail-fav');favBtn.textContent=isFav(r.id)?'❤️':'🤍';favBtn.className=isFav(r.id)?'detail-fav saved':'detail-fav';
 const feedbackLink=document.getElementById('detail-feedback-link');if(feedbackLink){const subject=encodeURIComponent(`GF Info Update: ${r.name}`);const body=encodeURIComponent(`Restaurant: ${r.name}\nAddress: ${r.address||'N/A'}\n\nWhat GF/celiac-safe info should be updated?\n\n- Does this restaurant have a GF menu?\n- Is there a dedicated fryer?\n- Is the kitchen celiac-safe (no cross-contamination)?\n- Any specific GF items to add?\n- Any keto, vegan, or organic options?`);feedbackLink.href=`mailto:feedback@brandbooststudio.co?subject=${subject}&body=${body}`;}
 const reportLink=document.getElementById('detail-report-link');if(reportLink){const subject=encodeURIComponent(`Report Issue: ${r.name}`);const body=encodeURIComponent(`Restaurant: ${r.name}\nAddress: ${r.address||'N/A'}\n\nWhat's wrong?\n\n- Permanently closed?\n- Wrong address?\n- Wrong hours?\n- Wrong phone number?\n- Other issue?`);reportLink.href=`mailto:feedback@brandbooststudio.co?subject=${subject}&body=${body}`;}
-document.getElementById('detail-overlay').classList.add('show');}
+document.getElementById('detail-overlay').classList.add('show');if(!r.hours&&r.id&&r.id.startsWith('y-'))fetchHours(r.id);}
 function closeDetail(){document.getElementById('detail-overlay').classList.remove('show');currentDetailRestaurant=null;}
 function toggleDetailFav(){if(!currentDetailRestaurant)return;toggleFav(currentDetailRestaurant.id,currentDetailRestaurant.name);const favBtn=document.getElementById('detail-fav');favBtn.textContent=isFav(currentDetailRestaurant.id)?'❤️':'🤍';favBtn.className=isFav(currentDetailRestaurant.id)?'detail-fav saved':'detail-fav';}
+
+async function fetchHours(rid){if(!rid||!rid.startsWith('y-'))return;try{const res=await fetch(`${API_BASE}/hours?id=${encodeURIComponent(rid)}`);if(!res.ok)return;const data=await res.json();if(!data||!data.hours)return;const r=allRestaurants.find(x=>x.id===rid);if(r){r.hours=data.hours;r.is_open_now=data.is_open_now;}if(currentDetailRestaurant&&currentDetailRestaurant.id===rid){const hoursRow=document.getElementById('detail-hours-row');const hoursEl=document.getElementById('detail-hours');hoursRow.style.display='';const todayD=new Date().getDay();const todayYelp=todayD===0?6:todayD-1;const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];const todayName=dayNames[todayYelp];const todayHours=data.hours[todayName]||'No hours';const openLabel=data.is_open_now===true?' <span style="color:var(--green);font-weight:700">Open</span>':data.is_open_now===false?' <span style="color:#ef4444;font-weight:700">Closed</span>':'';hoursEl.innerHTML=todayHours+'<br><span style="font-size:0.72rem;color:var(--muted)">'+Object.entries(data.hours).map(([d,h])=>d+': '+h).join(' · ')+'</span>'+openLabel;}renderResults();}catch(e){console.log('Hours fetch error:',e);}}
 
 function escapeHtml(text){const d=document.createElement('div');d.textContent=text;return d.innerHTML;}
 function sanitizeUrl(url){if(!url||typeof url!=='string')return '';try{const u=new URL(url);if(!['http:','https:'].includes(u.protocol))return '';return u.href;}catch(e){return '';}}

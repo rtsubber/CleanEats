@@ -1,20 +1,52 @@
 {
-  "name": "CleanEats",
+  "name": "CleanEats \u2014 Healthy & Gluten-Free Restaurants",
   "short_name": "CleanEats",
-  "description": "Healthy & Gluten-Free Restaurants Near You",
+  "description": "Find celiac-safe, gluten-free, keto, vegan & organic restaurants near you. 7-day free trial.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a1a",
   "theme_color": "#22c55e",
   "orientation": "portrait",
+  "scope": "/",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥗</text></svg>",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-1024x1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
-  "categories": ["food", "health", "lifestyle"],
-  "prefer_related_applications": false
+  "categories": [
+    "food",
+    "health",
+    "lifestyle"
+  ],
+  "prefer_related_applications": false,
+  "screenshots": [
+    {
+      "src": "https://cleaneats-eta.vercel.app/cleaneats-og.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "CleanEats - Find healthy restaurants near you"
+    }
+  ]
 }

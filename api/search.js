@@ -90,14 +90,14 @@ const GF_CHAIN_MENU = {
 };
 
 const DEMO_RESTAURANTS = [
-  { id: 'demo-1', name: 'The Green Kitchen', rating: 4.7, review_count: 342, price: '$$', distance: 800, address: '123 Health Ave, Austin, TX', phone: '(512) 555-0101', image_url: '', categories: 'Gluten-Free, Healthy, Salad', gf: true, gf_menu: true, gf_options: false, gf_note: 'Dedicated gluten-free kitchen', healthy: true, vegan: false, organic: true, keto: true, tags: ['gf','gfmenu','healthy','organic','keto'], coordinates: { latitude: 30.2672, longitude: -97.7431 } },
-  { id: 'demo-2', name: 'Fresh Bowl Co.', rating: 4.5, review_count: 218, price: '$$', distance: 1200, address: '456 Clean St, Austin, TX', phone: '(512) 555-0102', image_url: '', categories: 'Vegan, Gluten-Free, Juice Bar', gf: true, gf_menu: true, gf_options: false, gf_note: 'Full GF menu with bowls and smoothies', healthy: true, vegan: true, organic: false, keto: false, tags: ['gf','gfmenu','healthy','vegan'], coordinates: { latitude: 30.2682, longitude: -97.7441 } },
-  { id: 'demo-3', name: 'Nourish Cafe', rating: 4.8, review_count: 567, price: '$$$', distance: 2400, address: '789 Wellness Blvd, Austin, TX', phone: '(512) 555-0103', image_url: '', categories: 'Organic, Farm-to-Table, Gluten-Free', gf: true, gf_menu: true, gf_options: false, gf_note: '100% gluten-free kitchen', healthy: true, vegan: false, organic: true, keto: true, tags: ['gf','gfmenu','healthy','organic','keto'], coordinates: { latitude: 30.2652, longitude: -97.7451 } },
-  { id: 'demo-4', name: 'Harvest Kitchen', rating: 4.3, review_count: 189, price: '$$', distance: 3100, address: '321 Farm Rd, Austin, TX', phone: '(512) 555-0104', image_url: '', categories: 'Farm-to-Table, Healthy, Salad', gf: false, gf_menu: false, gf_options: true, gf_note: 'Several GF options available, ask your server', healthy: true, vegan: false, organic: true, keto: false, tags: ['gfopt','healthy','organic'], coordinates: { latitude: 30.2662, longitude: -97.7461 } },
-  { id: 'demo-5', name: 'Pure GF Bakery', rating: 4.9, review_count: 421, price: '$$', distance: 1800, address: '555 Wheat-Free Ln, Austin, TX', phone: '(512) 555-0105', image_url: '', categories: 'Bakeries, Gluten-Free', gf: true, gf_menu: true, gf_options: false, gf_note: 'Entire menu is gluten-free', healthy: false, vegan: false, organic: false, keto: false, tags: ['gf','gfmenu'], coordinates: { latitude: 30.2642, longitude: -97.7421 } },
-  { id: 'demo-6', name: 'Keto Kitchen', rating: 4.4, review_count: 156, price: '$$$', distance: 4200, address: '888 Low Carb Dr, Austin, TX', phone: '(512) 555-0106', image_url: '', categories: 'Keto, Paleo, Healthy', gf: true, gf_menu: false, gf_options: true, gf_note: 'Most items GF, ask about specific dishes', healthy: true, vegan: false, organic: false, keto: true, tags: ['gf','gfopt','healthy','keto'], coordinates: { latitude: 30.2632, longitude: -97.7471 } },
-  { id: 'demo-7', name: 'Earth Bowl', rating: 4.6, review_count: 312, price: '$$', distance: 1500, address: '222 Veggie Way, Austin, TX', phone: '(512) 555-0107', image_url: '', categories: 'Vegan, Vegetarian, Organic', gf: true, gf_menu: true, gf_options: false, gf_note: 'Dedicated GF menu with bowls and wraps', healthy: true, vegan: true, organic: true, keto: false, tags: ['gf','gfmenu','healthy','vegan','organic'], coordinates: { latitude: 30.2692, longitude: -97.7481 } },
-  { id: 'demo-8', name: 'Clean Juice', rating: 4.2, review_count: 98, price: '$', distance: 600, address: '100 Juice Bar Rd, Austin, TX', phone: '(512) 555-0108', image_url: '', categories: 'Juice Bars, Healthy, Açaí', gf: false, gf_menu: false, gf_options: true, gf_note: 'Most smoothies and bowls are GF', healthy: true, vegan: true, organic: false, keto: false, tags: ['gfopt','healthy','vegan'], coordinates: { latitude: 30.2702, longitude: -97.7411 } },
+  { id: 'demo-1', name: 'The Green Kitchen', rating: 4.7, review_count: 342, price: '$$', distance: 800, address: '123 Health Ave, Austin, TX', phone: '(512) 555-0101', image_url: '', categories: 'Gluten-Free, Healthy, Salad', gf: true, gf_menu: true, gf_options: false, gf_note: 'Dedicated gluten-free kitchen', healthy: true, vegan: false, organic: true, keto: true, tags: ['gf','gfmenu','healthy','organic','keto'], is_open_now: true, hours: { Mon: '7:00 AM–9:00 PM', Tue: '7:00 AM–9:00 PM', Wed: '7:00 AM–9:00 PM', Thu: '7:00 AM–9:00 PM', Fri: '7:00 AM–10:00 PM', Sat: '8:00 AM–10:00 PM', Sun: '8:00 AM–8:00 PM' }, coordinates: { latitude: 30.2672, longitude: -97.7431 } },
+  { id: 'demo-2', name: 'Fresh Bowl Co.', rating: 4.5, review_count: 218, price: '$$', distance: 1200, address: '456 Clean St, Austin, TX', phone: '(512) 555-0102', image_url: '', categories: 'Vegan, Gluten-Free, Juice Bar', gf: true, gf_menu: true, gf_options: false, gf_note: 'Full GF menu with bowls and smoothies', healthy: true, vegan: true, organic: false, keto: false, tags: ['gf','gfmenu','healthy','vegan'], is_open_now: true, hours: { Mon: '10:00 AM–8:00 PM', Tue: '10:00 AM–8:00 PM', Wed: '10:00 AM–8:00 PM', Thu: '10:00 AM–8:00 PM', Fri: '10:00 AM–9:00 PM', Sat: '11:00 AM–9:00 PM', Sun: '11:00 AM–7:00 PM' }, coordinates: { latitude: 30.2682, longitude: -97.7441 } },
+  { id: 'demo-3', name: 'Nourish Cafe', rating: 4.8, review_count: 567, price: '$$$', distance: 2400, address: '789 Wellness Blvd, Austin, TX', phone: '(512) 555-0103', image_url: '', categories: 'Organic, Farm-to-Table, Gluten-Free', gf: true, gf_menu: true, gf_options: false, gf_note: '100% gluten-free kitchen', healthy: true, vegan: false, organic: true, keto: true, tags: ['gf','gfmenu','healthy','organic','keto'], is_open_now: false, hours: { Mon: '11:00 AM–3:00 PM', Tue: '11:00 AM–3:00 PM', Wed: '11:00 AM–3:00 PM', Thu: '11:00 AM–9:00 PM', Fri: '11:00 AM–10:00 PM', Sat: '9:00 AM–10:00 PM', Sun: '9:00 AM–3:00 PM' }, coordinates: { latitude: 30.2652, longitude: -97.7451 } },
+  { id: 'demo-4', name: 'Harvest Kitchen', rating: 4.3, review_count: 189, price: '$$', distance: 3100, address: '321 Farm Rd, Austin, TX', phone: '(512) 555-0104', image_url: '', categories: 'Farm-to-Table, Healthy, Salad', gf: false, gf_menu: false, gf_options: true, gf_note: 'Several GF options available, ask your server', healthy: true, vegan: false, organic: true, keto: false, tags: ['gfopt','healthy','organic'], is_open_now: true, hours: { Mon: '11:00 AM–10:00 PM', Tue: '11:00 AM–10:00 PM', Wed: '11:00 AM–10:00 PM', Thu: '11:00 AM–10:00 PM', Fri: '11:00 AM–11:00 PM', Sat: '10:00 AM–11:00 PM', Sun: '10:00 AM–9:00 PM' }, coordinates: { latitude: 30.2662, longitude: -97.7461 } },
+  { id: 'demo-5', name: 'Pure GF Bakery', rating: 4.9, review_count: 421, price: '$$', distance: 1800, address: '555 Wheat-Free Ln, Austin, TX', phone: '(512) 555-0105', image_url: '', categories: 'Bakeries, Gluten-Free', gf: true, gf_menu: true, gf_options: false, gf_note: 'Entire menu is gluten-free', healthy: false, vegan: false, organic: false, keto: false, tags: ['gf','gfmenu'], is_open_now: true, hours: { Mon: '6:00 AM–2:00 PM', Tue: '6:00 AM–2:00 PM', Wed: '6:00 AM–2:00 PM', Thu: '6:00 AM–2:00 PM', Fri: '6:00 AM–6:00 PM', Sat: '7:00 AM–6:00 PM', Sun: 'Closed' }, coordinates: { latitude: 30.2642, longitude: -97.7421 } },
+  { id: 'demo-6', name: 'Keto Kitchen', rating: 4.4, review_count: 156, price: '$$$', distance: 4200, address: '888 Low Carb Dr, Austin, TX', phone: '(512) 555-0106', image_url: '', categories: 'Keto, Paleo, Healthy', gf: true, gf_menu: false, gf_options: true, gf_note: 'Most items GF, ask about specific dishes', healthy: true, vegan: false, organic: false, keto: true, tags: ['gf','gfopt','healthy','keto'], is_open_now: false, hours: { Mon: '11:00 AM–8:00 PM', Tue: '11:00 AM–8:00 PM', Wed: '11:00 AM–8:00 PM', Thu: '11:00 AM–8:00 PM', Fri: '11:00 AM–9:00 PM', Sat: '10:00 AM–9:00 PM', Sun: 'Closed' }, coordinates: { latitude: 30.2632, longitude: -97.7471 } },
+  { id: 'demo-7', name: 'Earth Bowl', rating: 4.6, review_count: 312, price: '$$', distance: 1500, address: '222 Veggie Way, Austin, TX', phone: '(512) 555-0107', image_url: '', categories: 'Vegan, Vegetarian, Organic', gf: true, gf_menu: true, gf_options: false, gf_note: 'Dedicated GF menu with bowls and wraps', healthy: true, vegan: true, organic: true, keto: false, tags: ['gf','gfmenu','healthy','vegan','organic'], is_open_now: true, hours: { Mon: '9:00 AM–9:00 PM', Tue: '9:00 AM–9:00 PM', Wed: '9:00 AM–9:00 PM', Thu: '9:00 AM–9:00 PM', Fri: '9:00 AM–10:00 PM', Sat: '8:00 AM–10:00 PM', Sun: '8:00 AM–8:00 PM' }, coordinates: { latitude: 30.2692, longitude: -97.7481 } },
+  { id: 'demo-8', name: 'Clean Juice', rating: 4.2, review_count: 98, price: '$', distance: 600, address: '100 Juice Bar Rd, Austin, TX', phone: '(512) 555-0108', image_url: '', categories: 'Juice Bars, Healthy, Açaí', gf: false, gf_menu: false, gf_options: true, gf_note: 'Most smoothies and bowls are GF', healthy: true, vegan: true, organic: false, keto: false, tags: ['gfopt','healthy','vegan'], is_open_now: true, hours: { Mon: '7:00 AM–7:00 PM', Tue: '7:00 AM–7:00 PM', Wed: '7:00 AM–7:00 PM', Thu: '7:00 AM–7:00 PM', Fri: '7:00 AM–7:00 PM', Sat: '8:00 AM–6:00 PM', Sun: '9:00 AM–5:00 PM' }, coordinates: { latitude: 30.2702, longitude: -97.7411 } },
 ];
 
 const GF_CATEGORIES = 'gluten_free,vegan,vegetarian,salad,juicebars';
@@ -377,6 +377,27 @@ export default async function handler(req, res) {
       }
     }
 
+    // ========== ENRICH GOOGLE RESULTS WITH WEBSITE & PHONE ==========
+    // Place Search doesn't return website/phone — we need Place Details for those
+    if (GOOGLE_API_KEY && googleResults.length > 0) {
+      const topPlaces = googleResults.slice(0, 12); // Enrich top 12 results (rate limit friendly)
+      const detailPromises = topPlaces.map(async (place) => {
+        if (!place.place_id) return;
+        try {
+          const detailUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.place_id}&fields=website,formatted_phone_number,url&key=${GOOGLE_API_KEY}`;
+          const detailRes = await fetch(detailUrl);
+          if (detailRes.ok) {
+            const detailData = await detailRes.json();
+            if (detailData.result) {
+              if (detailData.result.website) place.website = detailData.result.website;
+              if (detailData.result.formatted_phone_number) place.formatted_phone_number = detailData.result.formatted_phone_number;
+            }
+          }
+        } catch (e) { /* skip failed enrichment */ }
+      });
+      await Promise.all(detailPromises);
+    }
+
     // ========== MERGE & DEDUPLICATE ALL RESULTS ==========
     const allRestaurants = [];
     const seenNames = new Set();
@@ -568,9 +589,9 @@ function formatGooglePlace(place, searchLat, searchLng) {
     price: place.price_level ? '$'.repeat(place.price_level) : '',
     distance: Math.round(dist),
     address: place.vicinity || place.formatted_address || '',
-    phone: '',
+    phone: place.formatted_phone_number || place.phone || '',
     image_url: '',
-    url: `https://www.google.com/maps/place/?q=place_id:${place.place_id}`,
+    url: place.website || '',
     coordinates: {
       latitude: place.geometry?.location?.lat || 0,
       longitude: place.geometry?.location?.lng || 0
@@ -587,6 +608,13 @@ function formatGooglePlace(place, searchLat, searchLng) {
     organic: name.includes('organic'),
     keto: name.includes('keto') || name.includes('paleo') || name.includes('low carb'),
     drink_type: drinkType,
+    is_open_now: place.opening_hours?.open_now ?? null,
+    hours: place.opening_hours?.weekday_text ? Object.fromEntries(
+      place.opening_hours.weekday_text.map(line => {
+        const [day, ...rest] = line.split(': ');
+        return [day.substring(0,3), rest.join(': ')];
+      })
+    ) : null,
     tags,
     source: 'google'
   };
@@ -595,6 +623,10 @@ function formatGooglePlace(place, searchLat, searchLng) {
 // ========== Format Yelp biz into our restaurant schema ==========
 function formatYelpBiz(biz, searchLat, searchLng) {
   const dist = biz.distance || haversineDistance(searchLat, searchLng, biz.coordinates?.latitude, biz.coordinates?.longitude);
+  // Format hours from Yelp data
+  const yelpHours = biz.hours?.[0];
+  const isOpen = yelpHours?.is_open_now ?? (biz.is_closed !== undefined ? !biz.is_closed : null);
+  const hoursText = yelpHours?.open ? formatHoursFromYelp(yelpHours.open) : null;
   return {
     id: 'y-' + biz.id,
     name: biz.name || 'Unknown',
@@ -608,6 +640,8 @@ function formatYelpBiz(biz, searchLat, searchLng) {
     url: biz.url || '',
     coordinates: biz.coordinates || { latitude: 0, longitude: 0 },
     categories: biz.categories?.map(c => c.title).join(', ') || '',
+    is_open_now: isOpen,
+    hours: hoursText,
     gf: hasTag(biz, 'gluten_free') || hasKeyword(biz, 'gluten'),
     gf_menu: hasTag(biz, 'gluten_free') || hasKeyword(biz, 'gluten free menu') || hasKeyword(biz, 'gf menu') || isKnownGFChain(biz),
     gf_options: hasKeyword(biz, 'gluten free option') || hasKeyword(biz, 'gf option') || hasKeyword(biz, 'gluten friendly') || isKnownGFChainWithOptions(biz),
@@ -622,6 +656,32 @@ function formatYelpBiz(biz, searchLat, searchLng) {
     tags: buildTags(biz),
     source: 'yelp'
   };
+}
+
+// Convert Yelp hours format to readable text
+function formatHoursFromYelp(openHours) {
+  const dayNames = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const hours = {};
+  for (const h of openHours) {
+    const day = dayNames[h.day] || '?';
+    const start = fmt12(h.start);
+    const end = fmt12(h.end);
+    if (hours[day]) {
+      hours[day] += `, ${start}–${end}`;
+    } else {
+      hours[day] = `${start}–${end}`;
+    }
+  }
+  return hours;
+}
+
+function fmt12(hhmm) {
+  if (!hhmm) return '?';
+  const h = parseInt(hhmm.substring(0, 2), 10);
+  const m = hhmm.substring(2);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return `${h12}:${m} ${ampm}`;
 }
 
 // ========== Format Foursquare venue into our restaurant schema ==========
@@ -664,7 +724,7 @@ function formatFoursquareVenue(venue, searchLat, searchLng) {
     address: [loc.address, loc.city, loc.state, loc.postalCode].filter(Boolean).join(', '),
     phone: venue.contact?.phone || '',
     image_url: '',
-    url: `https://foursquare.com/v/${venue.id}`,
+    url: venue.url || '',
     coordinates: { latitude: loc.lat || 0, longitude: loc.lng || 0 },
     categories: catNames.join(', '),
     gf: isGFChain || name.includes('gluten free'),
@@ -678,9 +738,28 @@ function formatFoursquareVenue(venue, searchLat, searchLng) {
     organic: tags.includes('organic'),
     keto: tags.includes('keto'),
     drink_type: drinkType,
+    is_open_now: venue.hours?.isOpen ?? null,
+    hours: venue.hours?.display ? parseFoursquareHours(venue.hours.display) : null,
     tags,
     source: 'foursquare'
   };
+}
+
+// Parse Foursquare hours display string
+function parseFoursquareHours(display) {
+  if (!display) return null;
+  const dayNames = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const hours = {};
+  const lines = Array.isArray(display) ? display : display.split('\n');
+  for (const line of lines) {
+    for (const day of dayNames) {
+      if (line.toLowerCase().startsWith(day.toLowerCase())) {
+        const timePart = line.substring(day.length).trim().replace(/^:?\s*/, '');
+        hours[day] = timePart;
+      }
+    }
+  }
+  return Object.keys(hours).length > 0 ? hours : null;
 }
 
 function getFoursquareDrinkType(venue) {
